@@ -1,0 +1,2115 @@
+---
+title: "Work Problemset"
+author: "QJ"
+date: '2022-10-18'
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+hrbrthemes::import_roboto_condensed()
+library(hrbrthemes)
+library(viridis)
+library(ClusterR)
+library(cluster)
+library(ggplot2)
+library(plyr)
+library(dplyr)
+library(reshape2)
+library(Hmisc)
+library(data.table)
+library(hms)
+library(tibble)
+library(gridExtra)
+library(grid)
+library(lattice)
+library(tidyverse)
+library(stringr)
+library(lubridate)
+library(readr)       
+library(stringr) 
+library(psych)
+library(GGally)
+library(scales)
+library(ggpubr)
+library(readxl)
+library(stargazer)
+library(kableExtra)
+library(skimr)
+library("papeR")
+library(tidyselect)
+library(MASS)
+library("purrr")
+library(kableExtra)
+#library(PhantomJS)
+library("MatchIt")
+library(webshot)
+library(glmnet)
+library(caret)
+library(pROC)
+library(erer)
+library(nnet)
+library(dplyr)
+#library(ggplot2)
+library(coin)
+library(RItools)
+library(optmatch)
+library(estimatr)
+library("marginaleffects")
+library(gt)
+```
+
+## Create new Dummy
+
+```{r, warning=FALSE}
+
+rawdata <- read_excel("/hpc/home/qj15/Inequality/rawdataV12(2).xlsx")
+
+```
+
+```{r}
+rawdata$Macro <- !!rowSums(sapply(rawdata[27:42], grepl, pattern = "宏观|银行|公司|货币|世界经济|贸易|国际|monetary|财政学|国际预算|税收|经济周期|财税理论与政策|财税理论|财政理论|财税|南亚经济研究|南亚经济研究|利息理论|保险|东南亚|欧共体|经贸|亚太|土地问题|流通经济|经济特区|日本经济|美国经济|投入产出|Monetary|生产力|经济预测|technological|人口|财政|收入分配|国家预算|主体经济论|fiscal rules and money growth"))
+rawdata$PolitiE <- !!rowSums(sapply(rawdata[27:42], grepl, pattern = "马克思|资本主义|政治经济|体制|制度|资本论|社会主义经济|规制理论|思想政治|党章党规意识 防治为官不为|共产主义前条件|系统哲学|小康社会的科学内涵和基本特征|富裕文明新农村的概念及指标体系|政治經濟"))
+rawdata$Dev <- !!rowSums(sapply(rawdata[27:42], grepl, pattern = "发展|增长|卫生经济|贫穷"))
+rawdata$IO <- !!rowSums(sapply(rawdata[27:42], grepl, pattern = "公共经济|产业经济|区域经济|信息经济学|政府职能|农业|能源|产业|健康|公共政策研究|政府管制|公共|国防经济|政府经济学|垄断|地理与创新|地下经济|区域与城市经济|城市|创新与创业研究|教育财政|市场结构|技术进步|工业技术经济学|幸福经济学|区域旅游资源|特区经济|创新经济学"))
+rawdata$Envir <- !!rowSums(sapply(rawdata[27:42], grepl, pattern = "资源环境|环境经济学|环境经济|绿色|Environment|Climate|生态|:环境与资源保护法学|规划和自然资源|保护法学"))
+rawdata$EconHis <- !!rowSums(sapply(rawdata[27:42], grepl, pattern = "经济史|历史|发展史|近现代|经济思想史|中国共产党历史|中国古代经济史|中国现代经济史|中国经济史|西方经济学与经济思想史|经济学与历史学|中国经济|经济学说|经济思想史|规制经济学|转轨经济学|中华人民共和国经济史|经济史学理论|中国古代经济思想|日本近代史|中西文化关系史|红学研究|新民主主义论|古代重农抑商的经济思想对当前经济改革的借鉴"))
+rawdata$Finance <- !!rowSums(sapply(rawdata[27:42], grepl, pattern = "金融|货币|股市|股票|银行|时间序列|证券|資本市場|投融资理论|Finance|投资学|投资|资产评估"))
+rawdata$Micro <- !!rowSums(sapply(rawdata[27:42], grepl, pattern = "微观|equilibrium|西方经济学|价格学|经济理论|消费|理论经济学|个人理财规划|数字经济|经济管理|决策理论|有害健康|决策理论|Applied Microeconomic|市场经济|市场学|社会信任|市场在资源配置中的作用|民间美术、文创产品与包装设计、绘本的实践创新研究|Applied Micro"))
+rawdata$Behavior <- !!rowSums(sapply(rawdata[27:42], grepl, pattern = "博弈|风险态度|风险|决策理论|有害健康|Game Theory|偏好|实验经济学|供需核算"))
+rawdata$BuEcon <- !!rowSums(sapply(rawdata[27:42], grepl, pattern = "管理|财务管理|保险财务|电子商务|企业运营管理|企业组织理论|信息管理与信息系统|企业管理
+|战略管理|投融资与决策科学|技术创新|市场营销|服务营销|合同管理|战略管理/企业成长/企业再造|战略营销|合同管理|战略营销|企业收购|审计|市场理论|营销|企业|行业绩效|跨国谈判|会计|business communication|商业交流"))
+rawdata$Metrics <- !!rowSums(sapply(rawdata[27:42], grepl, pattern = "计量|Machine Learning|Algorithms|统计|数量经济学|计算机|机器学习|数理经济学|数学|精算学|Panel data analysis|技术经济学|Econometrics|数据分析与数据挖掘"))
+rawdata$Labor <- !!rowSums(sapply(rawdata[27:42], grepl, pattern = "人力|教育经济学|劳动|search theory|匹配理论|社会保障|Gender|Education|市场就业，工资|工资|Applied Theory, Labor Economics"))
+rawdata$Law <- !!rowSums(sapply(rawdata[27:42], grepl, pattern = "经济法|法律基金证卷|法律|行政法与行政诉讼法学，行政法制研究"))
+rawdata$EconEnglish <- !!rowSums(sapply(rawdata[27:42], grepl, pattern = "英语教学|英语教学理论|英语"))
+```
+
+```{r}
+allfalse <- rawdata[ which(rawdata$Macro=='FALSE' & rawdata$PolitiE=='FALSE' &rawdata$Dev=='FALSE'& rawdata$IO == 'FALSE'& rawdata$Finance == 'FALSE'& rawdata$Envir == 'FALSE' &rawdata$Micro == 'FALSE' &rawdata$EconHis =='FALSE' & rawdata$Metrics == 'FALSE' &rawdata$Labor == 'FALSE' &rawdata$BuEcon == 'FALSE'& rawdata$Law =='FALSE'&rawdata$Behavior == 'FALSE' & rawdata$EconEnglish == 'FALSE'), ]
+
+
+```
+
+
+
+```{r}
+ssdf <- data.frame()
+ssdf <- data.frame(
+  Macro_SS = numeric(nrow(rawdata)),
+  PolitiE_SS = numeric(nrow(rawdata)),
+  Dev_SS = numeric(nrow(rawdata)),
+  IO_SS = numeric(nrow(rawdata)),
+  Envir_SS = numeric(nrow(rawdata))
+)
+
+
+ssdf$Macro_SS <- rowSums(sapply(rawdata[27:42], function(column) grepl("宏观|银行|公司|货币|世界经济|贸易|国际|monetary|财政学|国际预算|税收|经济周期|财税理论与政策|财税理论|财政理论|财税|南亚经济研究|南亚经济研究|利息理论|保险|东南亚|欧共体|经贸|亚太|土地问题|流通经济|经济特区|日本经济|美国经济|投入产出|Monetary|生产力|经济预测|technological|人口|财政|收入分配|国家预算|主体经济论|fiscal rules and money growth", column)))
+
+ssdf$PolitiE_SS <- rowSums(sapply(rawdata[27:42], grepl, pattern = "马克思|资本主义|政治经济|体制|制度|资本论|社会主义经济|规制理论|思想政治|党章党规意识 防治为官不为|共产主义前条件|系统哲学|小康社会的科学内涵和基本特征|富裕文明新农村的概念及指标体系|政治經濟"))
+ssdf$Dev_SS <- rowSums(sapply(rawdata[27:42], grepl, pattern = "发展|增长|卫生经济|贫穷"))
+ssdf$IO_SS <- rowSums(sapply(rawdata[27:42], grepl, pattern = "公共经济|产业经济|区域经济|信息经济学|政府职能|农业|能源|产业|健康|公共政策研究|政府管制|公共|国防经济|政府经济学|垄断|地理与创新|地下经济|区域与城市经济|城市|创新与创业研究|教育财政|市场结构|技术进步|工业技术经济学|幸福经济学|区域旅游资源|特区经济|创新经济学"))
+ssdf$Envir_SS <- rowSums(sapply(rawdata[27:42], grepl, pattern = "资源环境|环境经济学|环境经济|绿色|Environment|Climate|生态|:环境与资源保护法学|规划和自然资源|保护法学"))
+ssdf$EconHis_SS <- rowSums(sapply(rawdata[27:42], grepl, pattern = "经济史|历史|发展史|近现代|经济思想史|中国共产党历史|中国古代经济史|中国现代经济史|中国经济史|西方经济学与经济思想史|经济学与历史学|中国经济|经济学说|经济思想史|规制经济学|转轨经济学|中华人民共和国经济史|经济史学理论|中国古代经济思想|日本近代史|中西文化关系史|红学研究|新民主主义论|古代重农抑商的经济思想对当前经济改革的借鉴"))
+ssdf$Finance_SS <- rowSums(sapply(rawdata[27:42], grepl, pattern = "金融|货币|股市|股票|银行|时间序列|证券|資本市場|投融资理论|Finance|投资学|投资|资产评估"))
+ssdf$Micro_SS <- rowSums(sapply(rawdata[27:42], grepl, pattern = "微观|equilibrium|西方经济学|价格学|经济理论|消费|理论经济学|个人理财规划|数字经济|经济管理|决策理论|有害健康|决策理论|Applied Microeconomic|市场经济|市场学|社会信任|市场在资源配置中的作用|民间美术、文创产品与包装设计、绘本的实践创新研究|Applied Micro"))
+ssdf$Behavior_SS <- rowSums(sapply(rawdata[27:42], grepl, pattern = "博弈|风险态度|风险|决策理论|有害健康|Game Theory|偏好|实验经济学|供需核算"))
+ssdf$BuEcon_SS <- rowSums(sapply(rawdata[27:42], grepl, pattern = "管理|财务管理|保险财务|电子商务|企业运营管理|企业组织理论|信息管理与信息系统|企业管理
+|战略管理|投融资与决策科学|技术创新|市场营销|服务营销|合同管理|战略管理/企业成长/企业再造|战略营销|合同管理|战略营销|企业收购|审计|市场理论|营销|企业|行业绩效|跨国谈判|会计|business communication|商业交流"))
+ssdf$Metrics_SS <- rowSums(sapply(rawdata[27:42], grepl, pattern = "计量|Machine Learning|Algorithms|统计|数量经济学|计算机|机器学习|数理经济学|数学|精算学|Panel data analysis|技术经济学|Econometrics|数据分析与数据挖掘"))
+ssdf$Labor_SS <- rowSums(sapply(rawdata[27:42], grepl, pattern = "人力|教育经济学|劳动|search theory|匹配理论|社会保障|Gender|Education|市场就业，工资|工资|Applied Theory, Labor Economics"))
+ssdf$Law_SS <- rowSums(sapply(rawdata[27:42], grepl, pattern = "经济法|法律基金证卷|法律|行政法与行政诉讼法学，行政法制研究"))
+ssdf$EconEnglish_SS <- rowSums(sapply(rawdata[27:42], grepl, pattern = "英语教学|英语教学理论|英语"))
+
+```
+
+```{r}
+column_names <- c("Macro_SS", "PolitiE_SS", "Dev_SS", "IO_SS", "Envir_SS", "EconHis_SS", "Finance_SS", "Micro_SS", "Behavior_SS", "BuEcon_SS", "Metrics_SS", "Labor_SS", "Law_SS", "EconEnglish_SS")
+
+ssdf$largest_column <- apply(ssdf[column_names], 1, function(row) {
+  max_count <- max(row)
+  max_columns <- column_names[row == max_count]
+  selected_column <- sample(max_columns, 1)
+  selected_column
+})
+
+
+```
+
+
+```{r}
+unique(rawdata$largest_column)
+
+
+```
+
+
+```{r}
+#department rank
+rawdata$departmentrank <- rawdata$学校
+rawdata$departmentrank <- as.character(rawdata$departmentrank)
+rawdata$departmentrank[which(rawdata$departmentrank=="人民大学")] <- "1"
+rawdata$departmentrank[which(rawdata$departmentrank=="复旦大学")] <- "2"
+rawdata$departmentrank[which(rawdata$departmentrank=="北京大学")] <- "3"
+rawdata$departmentrank[which(rawdata$departmentrank=="上海财经大学")] <- "4"
+rawdata$departmentrank[which(rawdata$departmentrank=="上海财经")] <- "4"
+rawdata$departmentrank[which(rawdata$departmentrank=="南开大学")] <- "5"
+rawdata$departmentrank[which(rawdata$departmentrank=="北师大")] <- "6"
+rawdata$departmentrank[which(rawdata$departmentrank=="武汉大学")] <- "7"
+rawdata$departmentrank[which(rawdata$departmentrank=="南京大学")] <- "8"
+rawdata$departmentrank[which(rawdata$departmentrank=="西南财经大学")] <- "9"
+rawdata$departmentrank[which(rawdata$departmentrank=="厦门大学")] <- "10"
+rawdata$departmentrank[which(rawdata$departmentrank=="西北大学")] <- "11"
+rawdata$departmentrank[which(rawdata$departmentrank=="中央财经大学")] <- "12"
+rawdata$departmentrank[which(rawdata$departmentrank=="清华大学")] <- "13"
+rawdata$departmentrank[which(rawdata$departmentrank=="对外经济贸易大学")] <- "14"
+rawdata$departmentrank[which(rawdata$departmentrank=="对外经贸大学")] <- "14"
+rawdata$departmentrank[which(rawdata$departmentrank=="中南财经政法大学")] <- "15"
+rawdata$departmentrank[which(rawdata$departmentrank=="辽宁大学")] <- "16"
+rawdata$departmentrank[which(rawdata$departmentrank=="浙江大学")] <- "17"
+rawdata$departmentrank[which(rawdata$departmentrank=="山东大学")] <- "18"
+rawdata$departmentrank[which(rawdata$departmentrank=="四川大学")] <- "19"
+rawdata$departmentrank[which(rawdata$departmentrank=="暨南大学")] <- "20"
+
+unique(rawdata$departmentrank)
+
+```
+
+```{r}
+rawdata$overalltrank <- rawdata$学校
+rawdata$overalltrank <- as.character(rawdata$overalltrank)
+rawdata$overalltrank[which(rawdata$overalltrank=="人民大学")] <- "19"
+rawdata$overalltrank[which(rawdata$overalltrank=="复旦大学")] <- "5"
+rawdata$overalltrank[which(rawdata$overalltrank=="北京大学")] <- "2"
+rawdata$overalltrank[which(rawdata$overalltrank=="上海财经大学")] <- "33"
+rawdata$overalltrank[which(rawdata$overalltrank=="上海财经")] <- "33"
+
+rawdata$overalltrank[which(rawdata$overalltrank=="南开大学")] <- "20"
+rawdata$overalltrank[which(rawdata$overalltrank=="北师大")] <- "17"
+rawdata$overalltrank[which(rawdata$overalltrank=="武汉大学")] <- "9"
+rawdata$overalltrank[which(rawdata$overalltrank=="南京大学")] <- "6"
+rawdata$overalltrank[which(rawdata$overalltrank=="西南财经大学")] <- "72"
+rawdata$overalltrank[which(rawdata$overalltrank=="厦门大学")] <- "26"
+rawdata$overalltrank[which(rawdata$overalltrank=="西北大学")] <- "67"
+rawdata$overalltrank[which(rawdata$overalltrank=="中央财经大学")] <- "44"
+rawdata$overalltrank[which(rawdata$overalltrank=="清华大学")] <- "1"
+rawdata$overalltrank[which(rawdata$overalltrank=="对外经贸大学")] <- "47"
+rawdata$overalltrank[which(rawdata$overalltrank=="对外经济贸易大学")] <- "47"
+
+
+rawdata$overalltrank[which(rawdata$overalltrank=="中南财经政法大学")] <- "66"
+rawdata$overalltrank[which(rawdata$overalltrank=="辽宁大学")] <- "127"
+rawdata$overalltrank[which(rawdata$overalltrank=="浙江大学")] <- "3"
+rawdata$overalltrank[which(rawdata$overalltrank=="山东大学")] <- "22"
+rawdata$overalltrank[which(rawdata$overalltrank=="四川大学")] <- "11"
+rawdata$overalltrank[which(rawdata$overalltrank=="暨南大学")] <- "47"
+rawdata$overalltrank[which(rawdata$overalltrank=="暨南大学")] <- "47"
+
+
+
+unique(rawdata$overalltrank)
+
+```
+
+```{r}
+rawdata$学校[which(rawdata$学校=="人民大学")] <- "Renmin U"
+rawdata$学校[which(rawdata$学校=="复旦大学")] <- "Fudan U"
+rawdata$学校[which(rawdata$学校=="北京大学")] <- "Peking U"
+rawdata$学校[which(rawdata$学校=="上海财经大学")] <- "Shanghai U of Finance and Economics"
+rawdata$学校[which(rawdata$学校=="上海财经")] <- "Shanghai U of Finance and Economics"
+
+rawdata$学校[which(rawdata$学校=="南开大学")] <- "Nankai U"
+rawdata$学校[which(rawdata$学校=="北师大")] <- "Beijing Normal U"
+rawdata$学校[which(rawdata$学校=="武汉大学")] <- "Wuhan U"
+rawdata$学校[which(rawdata$学校=="南京大学")] <- "Nanjing U"
+rawdata$学校[which(rawdata$学校=="西南财经大学")] <- "Southwestern U of Finance and Economics"
+rawdata$学校[which(rawdata$学校=="厦门大学")] <- "Xiamen U"
+rawdata$学校[which(rawdata$学校=="西北大学")] <- "Northwest U"
+rawdata$学校[which(rawdata$学校=="中央财经大学")] <- "Central U of Finance and Economics"
+rawdata$学校[which(rawdata$学校=="清华大学")] <- "Tsinghua U"
+rawdata$学校[which(rawdata$学校=="对外经贸大学")] <- "U of International Business and Economics"
+rawdata$学校[which(rawdata$学校=="对外经济贸易大学")] <- "U of International Business and Economics"
+
+rawdata$学校[which(rawdata$学校=="中南财经政法大学")] <- "Zhongnan U of Economics and Law"
+rawdata$学校[which(rawdata$学校=="辽宁大学")] <- "Liaoning U"
+rawdata$学校[which(rawdata$学校=="浙江大学")] <- "Zhejiang U"
+rawdata$学校[which(rawdata$学校=="山东大学")] <- "Shandong U"
+rawdata$学校[which(rawdata$学校=="四川大学")] <- "Sichuan U"
+rawdata$学校[which(rawdata$学校=="暨南大学")] <- "Jinan U"
+
+rawdata$Field <- ssdf$largest_column
+
+
+```
+
+```{r}
+#write.csv(rawdata,"rawdata.csv", row.names = FALSE)
+
+#colnames(rawdata) 
+
+```
+
+```{r}
+
+
+
+
+title <- unique(rawdata$职称, incomparables = FALSE, fromLast = FALSE,
+        nmax = NA)
+
+title
+```
+
+```{r}
+#Otherjobs
+rawdata <- rawdata %>% 
+  add_column(otherposition.factor = if_else(rawdata$是否担任其它职位 == "NA"|rawdata$是否担任其它职位 == "0"|is.na(rawdata$是否担任其它职位), 0, 1), .after="overalltrank")
+
+colnames(rawdata)
+
+#a<-rawdata[, c("otherposition.factor", "是否担任其它职位")]
+
+```
+
+```{r}
+colnames(rawdata)[which(names(rawdata) == "国际化（临时）")] <- "国际化"
+rawdata$visit <- with(rawdata, ifelse(国际化 == "NA", 0, 1))
+#rawdata$visit <- with(rawdata, ifelse(特殊头衔 == "NA"|"false", 0, 1))
+
+
+```
+
+## Subset Data
+
+```{r}
+#create subdata 
+
+#df <- rawdata[c("博士毕业时间", "升副教授时间", "升副教授之前项目（包含升职年）", "升副教授之前教材（包含升职年）", "升副教授之前专著（包含升职年）", "升副教授之前发表（包含升职年）", "升副教之前拿奖（包含升职年）", "升正教授时间",                  "升正教授之前教材（包含升职年）", "升正教授之前专著（包含升职年）", "升正教之前发表（包含升职年）", "升正教授之前项目（包含升职年）", "升正教之前拿奖（包含升职年）", "发表教材总数", "发表论文总数", "发表著作总数", "获奖总数", "总项目数", "H指数", "获奖总数", "总项目数", "H指数", "国际化（临时）", "获奖记录（临时）", "职称", "学校", "是否担任其它职位", "1否党员", "特殊头衔原文", "特殊头衔获得时间", "是否博士", "Man", "国际学历", "国际研究经历", "特殊头衔", "发表论文总数new" , "H指数new")]
+
+df <- rawdata[,!names(rawdata) %in% c("Column1","博士毕业学校", "其它...33", "其它...34", "...45", "其它...35", "其它...36", "其它...37", "其它...38", "其它...39","               其它...40", "其它...41","其它...42", "性别（中南财大，北大，上海财经）","...44", "...46",  "*********国际清单***********", "**特殊头衔**" , "*****研究生学历*****", "国际化", "系、所、中心"  ,"...54", "其它...40", "...55","H指数", "博士毕业学校排名（2021)", "...57","姓","图片","姓（英文）", "...60","名","名（英文）", "获奖记录（临时）", "领域", "去向","特殊头衔获得时间" , "教学、研究领域" ,"离岗时间", "特殊头衔原文", "职称","是否担任其它职位")]
+
+
+
+colnames(df) 
+
+```
+
+```{r}
+colnames(df)[which(names(df) == "博士毕业时间")] <- "PhD.Graduation.Time"
+colnames(df)[which(names(df) == "升副教授时间")] <- "Time.AP"
+colnames(df)[which(names(df) == "升副教授之前项目（包含升职年）")] <- "Project.AP"
+colnames(df)[which(names(df) == "升副教授之前教材（包含升职年）")] <- "Textbook.AP"
+colnames(df)[which(names(df) == "升副教授之前专著（包含升职年）")] <- "Books.AP"
+colnames(df)[which(names(df) == "升副教授之前发表（包含升职年）")] <- "Papers.AP"
+colnames(df)[which(names(df) == "升副教之前拿奖（包含升职年）")] <- "Awards.AP"
+colnames(df)[which(names(df) == "升正教授时间")] <- "Time.FP"
+colnames(df)[which(names(df) == "升正教授之前教材（包含升职年）")] <- "Textbooks.FP"
+colnames(df)[which(names(df) == "升正教授之前专著（包含升职年）")] <- "Books.FP"
+colnames(df)[which(names(df) == "升正教之前发表（包含升职年）")] <- "Papers.FP"
+colnames(df)[which(names(df) == "升正教授之前项目（包含升职年）")] <- "Projects.FP"
+colnames(df)[which(names(df) == "升正教之前拿奖（包含升职年）")] <- "Awards.FP"
+colnames(df)[which(names(df) == "发表教材总数")] <- "TolTextbooks"
+colnames(df)[which(names(df) == "发表论文总数")] <- "WebTolpapers"
+colnames(df)[which(names(df) == "发表著作总数")] <- "Tolbooks"
+colnames(df)[which(names(df) == "获奖总数")] <- "Tolawards"
+colnames(df)[which(names(df) == "总项目数")] <- "Tolprojects"
+colnames(df)[which(names(df) == "职称")] <- "Titles"
+colnames(df)[which(names(df) == "是否担任其它职位")] <- "OtherJobs"
+#colnames(df)[which(names(df) == "1否党员")] <- "oposmembers"
+colnames(df)[which(names(df) == "是否博士")] <- "PhD"
+colnames(df)[which(names(df) == "否党员")] <- "Partymembers"
+colnames(df)[which(names(df) == "国际学历")] <- "IntDegree"
+colnames(df)[which(names(df) == "国际研究经历")] <- "VisitScholar"
+colnames(df)[which(names(df) == "特殊头衔")] <- "HonorableTitle"
+colnames(df)[which(names(df) == "查到时间")] <- "Foundtime"
+colnames(df)[which(names(df) == "博士毕业学校排名（2022)")] <- "PhdRanking"
+colnames(df)[which(names(df) == "发表论文总数new")] <- "WebTolpaper"
+colnames(df)[which(names(df) == "H指数new")] <- "WebHindex"
+colnames(df)[which(names(df) == "学校")] <- "workinginstitute"
+colnames(df)[which(names(df) == "Man or Not")] <- "Man"
+
+colnames(df) 
+
+
+
+
+```
+
+```{r}
+
+alltrue <- df[ which(rawdata$Macro=='TRUE' | rawdata$PolitiE=='TRUE' |rawdata$Dev=='TRUE'| rawdata$IO == 'TRUE'| rawdata$Finance == 'TRUE'| rawdata$Envir == 'TRUE' |rawdata$Micro == 'TRUE' |rawdata$EconHis =='TRUE' | rawdata$Metrics == 'TRUE' |rawdata$Labor == 'TRUE' |rawdata$BuEcon == 'TRUE'| rawdata$Law =='TRUE'|rawdata$Behavior == 'TRUE' | rawdata$EconEnglish == 'TRUE'), ]
+
+```
+
+```{r}
+unique(df$title.factor, incomparables = FALSE, fromLast = FALSE,
+        nmax = NA)
+```
+
+```{r}
+
+
+dfnew<-df[!(df$title.factor=="查不到" | df$title.factor=="行政" |df$title.factor=="NA"),]
+#dfnew$title.factor<-replace(dfnew$title.factor, dfnew$title.factor=="2 " , "2.0")
+
+dfnew$title.factor<-as.numeric(dfnew$title.factor)
+dfnew$title.factor <- as.factor(dfnew$title.factor)
+
+unique(dfnew$title.factor, incomparables = FALSE, fromLast = FALSE,
+        nmax = NA)
+df <- dfnew 
+```
+
+## summary plots
+
+```{r}
+library(data.table)
+Fcombine <- df[, 30:43]
+Fcombine$order<-1:nrow(Fcombine)
+```
+
+```{r}
+library(reshape2)
+
+field <- reshape2::melt(Fcombine, id.vars = "order")
+fieldtrue <- field %>% subset(value == TRUE)
+
+```
+
+```{r}
+ggplot(fieldtrue, aes(x=variable)) +
+  geom_bar(position='dodge', stat='count', width=0.5, fill="blue") +
+  ggtitle('Number of Faculty Members by Fields') +
+  xlab('Fields') +
+  scale_fill_manual('Product', values=c('coral2','steelblue'))  +geom_text(aes(label = ..count..), stat = "count", color = "red", , vjust = -0.25)+   theme(axis.text.x = element_text(angle = 90)) +theme(plot.title = element_text(hjust = 0.5)) 
+
+
+```
+
+```{r}
+#Pie Chart for Gender
+allgender <- as.data.frame(table(df$Man))
+allgender$Var1 <- as.character(allgender$Var1)
+allgender[2,1] = 'Male'
+allgender[1,1] = 'Female'
+allgender
+
+
+allgender <- allgender %>% 
+  arrange(desc(Var1)) %>%
+  mutate(prop = Freq / sum(allgender$Freq) *100) %>%
+  mutate(ypos = cumsum(prop)- 0.5*prop )
+
+colnames(allgender)[which(names(allgender) == "Var1")] <- "Gender"
+
+
+algenderpi <- ggplot(allgender, aes(x="", y=Freq, fill = Gender)) +
+  geom_bar(stat="identity", width=1, color="white") +
+  coord_polar("y", start=0) +
+  theme_void() + 
+   geom_text(aes(label = paste(round(Freq / sum(Freq) * 100, 1), "%")), position = position_stack(vjust = 0.5))+theme(plot.title = element_text(hjust = 0.5))  + 
+   labs(fill = "Gender",
+       x = NULL,
+       y = NULL,)
+       #title = "Percentage of Genders") 
+ 
+
+```
+
+```{r}
+
+allparty <- as.data.frame(table(df$`Partymembers`))
+allparty$Var1 <- as.character(allparty$Var1)
+allparty[2,1] = 'Party Member'
+allparty[1,1] = 'Non-Party Member'
+allparty  
+  
+allparty <- allparty %>% 
+  arrange(desc(Var1)) %>%
+  mutate(prop = Freq / sum(allparty$Freq) *100) %>%
+  mutate(ypos = cumsum(prop)- 0.5*prop )
+
+colnames(allparty)[which(names(allparty) == "Var1")] <- "Party"
+
+
+allpartypi <- ggplot(allparty, aes(x="", y=Freq, fill = Party)) +
+  geom_bar(stat="identity", width=1, color="white") +
+  coord_polar("y", start=0) +
+  theme_void() + 
+   geom_text(aes(label = paste(round(Freq / sum(Freq) * 100, 1), "%")), position = position_stack(vjust = 0.5))+theme(plot.title = element_text(hjust = 0.5))  + 
+   labs(fill = "Party Memberships",
+       x = NULL,
+       y = NULL,)
+       #title = "Percentage of Party Members") 
+ 
+
+```
+
+```{r}
+
+alint <- as.data.frame(table(df$`IntDegree`))
+alint$Var1 <- as.character(alint$Var1)
+alint[2,1] = 'International Degree'
+alint[1,1] = 'Non-International Degree'
+alint  
+  
+alint <- alint %>% 
+  arrange(desc(Var1)) %>%
+  mutate(prop = Freq / sum(alint$Freq) *100) %>%
+  mutate(ypos = cumsum(prop)- 0.5*prop )
+
+colnames(alint)[which(names(alint) == "Var1")] <- 'Intdegree'
+
+
+alintpi <- ggplot(alint, aes(x="", y=Freq, fill = Intdegree)) +
+  geom_bar(stat="identity", width=1, color="white") +
+  coord_polar("y", start=0) +
+  theme_void() + 
+   geom_text(aes(label = paste(round(Freq / sum(Freq) * 100, 1), "%")), position = position_stack(vjust = 0.5))+theme(plot.title = element_text(hjust = 0.5))  + 
+   labs(fill = "International Degree",
+       x = NULL,
+       y = NULL,)
+       #title = "Percentage of International Degree") 
+ 
+
+```
+
+```{r}
+
+library(patchwork)
+
+ggarrange(alintpi, allpartypi, algenderpi, 
+          ncol = 2, nrow = 2, align = "v",  labels=c("A","B", "C"))
+
+#allpartypi + alintpi + algenderpi
+
+
+```
+
+```{r, warning=FALSE}
+#summary(df)
+
+df[,1:18] <- sapply(df[,1:18],as.numeric)
+df[,20:25] <- sapply(df[,20:25],as.factor)
+df$workinginstitute<- as.factor(df$workinginstitute)
+df$Partymembers<- as.factor(df$Partymembers)
+df$PhD<- as.factor(df$PhD)
+df$`Man`<- as.factor(df$`Man`)
+df$IntDegree<- as.factor(df$IntDegree)
+df$VisitScholar<- as.factor(df$VisitScholar)
+df$HonorableTitle<- as.factor(df$HonorableTitle)
+df$otherposition.factor<- as.factor(df$otherposition.factor)
+df$visit<- as.factor(df$visit)
+df$title.factor <- as.factor(df$title.factor)
+
+
+
+for (i in 30:43){
+  df[,i] <- sapply(sapply(df[,i],as.numeric), as.factor)
+  
+}
+
+
+
+df[,c(27:29)] <- sapply(df[,c(27:29)],as.numeric)
+#df[,c(30:43)] <- sapply(sapply(df[,c(30:43)],as.numeric), as.factor)
+
+#df[,c(30:43)] <- sapply(df[,c(30:43)],as.factor)
+#df[,44] <- sapply(df[,44],as.factor)
+df[,45:46] <- sapply(df[,45:46],as.numeric)
+#df[,47:48] <- sapply(df[,47:48],as.factor)
+
+df[,51:52] <- sapply(df[,51:52],as.numeric)
+
+summary(df)
+```
+
+```{r}
+xtable(summarize(df, type = "numeric"))
+
+
+summarize(df)
+colnames(df)
+```
+
+```{r}
+totdf <- summarize(df[(names(df) %in%c("PhD.Graduation.Time", "TolTextbooks", "WebTolpapers", "Tolbooks", "Tolawards", "Tolprojects", "PhdRanking", "WebHindex", "departmentrank", "overalltrank"))])
+
+rownames(totdf) <-  c("PhD.Graduation.Time", "Total Number of Published Textbooks","Total Number of Published Papers","Total number of Published Books", "Total Number of Awards", "Total Number of Projects", "Rank of PhD Schools",  "H-Index", "Rank of Working Departments", "Rank of Working Schools")
+
+#totdf <- totdf[-1]
+
+
+totdf <- totdf[,-1]
+totdf <- as.data.frame(totdf)
+
+
+kable(totdf, caption = "Table of Total Numbers") %>%
+   kable_classic(full_width = FALSE, html_font = "Cambria", font_size=16)
+
+
+# xtable(totdf, caption = "Table of Total Numbers")
+stargazer(totdf,type = "latex", title = "Table of Total Numbers")
+
+
+```
+
+```{r}
+timedf <- summarize(df[(names(df) %in%c("Time.AP", "Project.AP", "Textbook.AP", "Books.AP","Papers.AP","Awards.AP", "Time.FP","Textbooks.FP", "Books.FP", "Papers.FP", "Projects.FP", "Awards.FP"))])
+
+rownames(timedf) <-  c("Time When Promoted as AP", "# of Projects when Promoted as AP","# of Textbooks when Promoted as AP","# of Published Books when Promoted as AP", "# of  Papers when Promoted as AP", "# of Awards when Promoted as AP","Time when Promoted as FP","# of Textbooks when Promoted as FP","# of Books when Promoted as FP","# of Papers when Promoted as FP","# of Projects when Promoted as FP", "# of Awards when Promoted as FP")
+timedf <- timedf[-1]
+
+
+timedf
+
+kable(timedf, caption = "Table of Promotion") %>% kable_styling(latex_options = c("hold_position")) %>%
+   kable_classic(full_width = TRUE, html_font = "Cambria", font_size=12) 
+
+
+
+
+```
+
+```{r}
+df <- df[!is.na(df$title.factor),]
+
+
+facgender <- df[,c('title.factor', 'Man')]
+unique(facgender$title.factor)
+
+levels(facgender$title.factor)[levels(facgender$title.factor)=='1'] <- 'Assistant Professor'
+levels(facgender$title.factor)[levels(facgender$title.factor)=='2'] <- 'Associate Professor'
+levels(facgender$title.factor)[levels(facgender$title.factor)=='3'] <- 'Full Professor'
+
+facgender <- facgender[!is.na(df$Man),]
+
+facgender$Gender <- with(facgender, ifelse(Man == "1",  'Man','Woman'))
+
+
+
+ggplot(data = facgender, aes(x = title.factor, fill = Gender)) +
+    geom_bar(position = "dodge")+
+  ggtitle('Gender Distribution Across Different Academic Ranks') +
+  xlab('Titles')+   theme(axis.text.x = element_text(angle = 0)) +theme(plot.title = element_text(hjust = 0.5)) 
+
+
+
+```
+
+```{r}
+partfac <- df[,c('title.factor', 'Partymembers')]
+unique(partfac$title.factor)
+
+levels(partfac$title.factor)[levels(partfac$title.factor)=='1'] <- 'Assistant Professor'
+levels(partfac$title.factor)[levels(partfac$title.factor)=='2'] <- 'Associate Professor'
+levels(partfac$title.factor)[levels(partfac$title.factor)=='3'] <- 'Full Professor'
+
+partfac <- partfac[!is.na(df$Partymembers),]
+
+partfac$Membership <- with(partfac, ifelse(Partymembers == "1",  'Party Member','Non Party Member'))
+
+
+ggplot(data = partfac, aes(x = title.factor, fill = Membership)) +
+    geom_bar(position = "dodge")+
+  ggtitle('Party Membership Distribution') +
+  xlab('Titles')+   theme(axis.text.x = element_text(angle = 0)) +theme(plot.title = element_text(hjust = 0.5)) 
+
+```
+
+```{r}
+
+intfac <- df[,c('title.factor', 'IntDegree')]
+unique(intfac$title.factor)
+
+levels(intfac$title.factor)[levels(intfac$title.factor)=='1'] <- 'Assistant Professor'
+levels(intfac$title.factor)[levels(intfac$title.factor)=='2'] <- 'Associate Professor'
+levels(intfac$title.factor)[levels(intfac$title.factor)=='3'] <- 'Full Professor'
+
+intfac <- intfac[!is.na(df$IntDegree),]
+
+intfac$International <- with(intfac, ifelse(IntDegree == "1",  'Hold International Degree','Not Hold International Degree'))
+
+
+ggplot(data = intfac, aes(x = title.factor, fill = International)) +
+    geom_bar(position = "dodge")+
+  ggtitle('International Distribution') +
+  xlab('Titles')+   theme(axis.text.x = element_text(angle = 0)) +theme(plot.title = element_text(hjust = 0.5)) 
+
+```
+
+```{r}
+df_summary <- df %>%
+  group_by(IntDegree) %>%
+  dplyr::summarise(total = n(),
+            non_na = sum(!is.na(WebHindex)),
+            percentage = (non_na / total) * 100)
+
+plot.a <- ggplot(df_summary, aes(x = factor(IntDegree, labels = c( "Without International Degree", "With International Degree")), y = percentage)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(title = "Percentage of Faculty Members with H-index Records",
+       x = "IntDegree Group",
+       y = "Percentage") +
+  theme_minimal()
+
+plot
+
+```
+
+## Elite Label
+
+```{r}
+# Create Labels for Elite Departments
+
+unique(df$departmentrank)
+df$elitedepartments <- cut(df$departmentrank, c(0,5,20), c("Top Departments", "Selective Departments"))
+unique(df$elitedepartments)
+
+
+
+df$eliteschools <- cut(df$overalltrank, c(0,5,20,50,130), c("Top Schools","Elite Schools" ,"Selective Schools","Normal Schools"))
+unique(df$eliteschools)
+
+
+
+```
+
+```{r}
+#create tables for Departments
+#total numbers
+library(kableExtra)
+
+totaldf<- df[!(names(df) %in%c("Time.AP", "Project.AP", "Textbook.AP", "Books.AP","Papers.AP","Awards.AP", "Time.FP","Textbooks.FP", "Books.FP", "Papers.FP", "Projects.FP", "Awards.FP"))]
+
+totaldf <- totaldf %>% select_if(is.numeric)
+totaldf$elitedepartments <- cut(totaldf$departmentrank, c(0,5,20), c("Top Departments", "Selective Departments"))
+
+
+toldf <- describeBy(totaldf[1:11], group = totaldf$elitedepartments, fast = TRUE, omit= TRUE)
+
+
+#tapply(totaldf, totaldf$elitedepartments, summary)
+
+
+rownames(toldf$`Top Departments`) <-  c("PhD.Graduation.Time", "Total Number of Published Textbooks","Total Number of Published Papers from Personal Websites","Total number of Published Books", "Total Number of Awards", "Total Number of Projects", " Rank of PhD Schools", "Total Number of Papers from Database", "H-Index", "Rank of Working Departments", "Rank of Working Schools")
+
+rownames(toldf$`Selective Departments`) <-  c("PhD.Graduation.Time", "Total Number of Published Textbooks","Total Number of Published Papers from Personal Websites","Total number of Published Books", "Total Number of Awards", "Total Number of Projects", " Rank of PhD Schools", "Total Number of Papers from Database", "H-Index", "Rank of Working Departments", "Rank of Working Schools")
+
+kbl(toldf$`Top Departments`, caption = "Table of Total Numbers for Top Departments") %>%
+   kable_classic(full_width = TRUE, html_font = "Cambria", font_size=16) %>% save_kable(file= "Table of Total Numbers for Top Departments.html")
+
+kbl(toldf$`Selective Departments`, caption = "Table of Total Numbers for Selective Departments") %>%
+   kable_classic(full_width = TRUE, html_font = "Cambria", font_size=16) %>% save_kable(file= "Table of Total Numbers for Selective Departments.html")
+```
+
+```{r}
+# for each promotion
+
+timedf<- df[(names(df) %in%c("Time.AP", "Project.AP", "Textbook.AP", "Books.AP","Papers.AP","Awards.AP", "Time.FP","Textbooks.FP", "Books.FP", "Papers.FP", "Projects.FP", "Awards.FP","departmentrank"))]
+
+
+timedf$elitedepartments <- cut(timedf$departmentrank, c(0,5,20), c("Top Departments", "Selective Departments"))
+unique(timedf$elitedepartments)
+
+ptdf <- describeBy(timedf[1:12], group = timedf$elitedepartments, fast = TRUE, omit= TRUE)
+
+rownames(ptdf$`Top Departments`) <-  c("Time When Promoted as AP", "# of Projects when Promoted as AP","# of Textbooks when Promoted as AP","# of Published Books when Promoted as AP", "# of  Papers when Promoted as AP", "# of Awards when Promoted as AP","Time when Promoted as FP","# of Textbooks when Promoted as FP","# of Books when Promoted as FP","# of Papers when Promoted as FP","# of Projects when Promoted as FP", "# of Awards when Promoted as FP")
+
+rownames(ptdf$`Selective Departments`) <-  c("Time When Promoted as AP", "# of Projects when Promoted as AP","# of Textbooks when Promoted as AP","# of Published Books when Promoted as AP", "# of  Papers when Promoted as AP", "# of Awards when Promoted as AP","Time when Promoted as FP","# of Textbooks when Promoted as FP","# of Books when Promoted as FP","# of Papers when Promoted as FP","# of Projects when Promoted as FP", "# of Awards when Promoted as FP")
+
+kable(ptdf$`Selective Departments`, caption = "Table of Promotion, Selective Departments") %>% kable_styling(latex_options = c("hold_position")) %>% kable_classic(full_width = TRUE, html_font = "Cambria", font_size=16) %>% save_kable(file= "Table of Promotion, Selective Departments.html")
+
+kbl(ptdf$`Top Departments`,format="html" ,caption = "Table of Promotion, Top Departments") %>% kable_styling(latex_options = c("hold_position")) %>%
+   kable_classic(full_width = TRUE, html_font = "Cambria", font_size=14) %>% save_kable(file= "Table of Promotion, Top Departments.html")
+
+
+
+
+```
+
+```{r}
+#create tables for Schools
+#total
+library(kableExtra)
+
+totaldfs<- df[!(names(df) %in%c("Time.AP", "Project.AP", "Textbook.AP", "Books.AP","Papers.AP","Awards.AP", "Time.FP","Textbooks.FP", "Books.FP", "Papers.FP", "Projects.FP", "Awards.FP"))]
+
+totaldfs <- totaldfs %>% select_if(is.numeric)
+
+totaldfs$eliteschools <- cut(totaldfs$overalltrank, c(0,5,20,50,130), c("Top Schools","Elite Schools" ,"Selective Schools","Normal Schools"))
+unique(df$eliteschools)
+
+
+
+toldfs <- describeBy(totaldfs[1:11], group = totaldfs$eliteschools, fast = TRUE, omit= TRUE)
+
+
+#tapply(totaldf, totaldf$elitedepartments, summary)
+
+
+rownames(toldfs$`Top Schools`) <-  c("PhD.Graduation.Time", "Total Number of Published Textbooks","Total Number of Published Papers from Personal Websites","Total number of Published Books", "Total Number of Awards", "Total Number of Projects", " Rank of PhD Schools", "Total Number of Papers from Database", "H-Index", "Rank of Working Departments", "Rank of Working Schools")
+
+rownames(toldfs$`Elite Schools`) <-  c("PhD.Graduation.Time", "Total Number of Published Textbooks","Total Number of Published Papers from Personal Websites","Total number of Published Books", "Total Number of Awards", "Total Number of Projects", " Rank of PhD Schools", "Total Number of Papers from Database", "H-Index", "Rank of Working Departments", "Rank of Working Schools")
+
+rownames(toldfs$`Selective Schools`) <-  c("PhD.Graduation.Time", "Total Number of Published Textbooks","Total Number of Published Papers from Personal Websites","Total number of Published Books", "Total Number of Awards", "Total Number of Projects", " Rank of PhD Schools", "Total Number of Papers from Database", "H-Index", "Rank of Working Departments", "Rank of Working Schools")
+
+rownames(toldfs$`Normal Schools`) <-  c("PhD.Graduation.Time", "Total Number of Published Textbooks","Total Number of Published Papers from Personal Websites","Total number of Published Books", "Total Number of Awards", "Total Number of Projects", " Rank of PhD Schools", "Total Number of Papers from Database", "H-Index", "Rank of Working Departments", "Rank of Working Schools")
+
+
+kbl(toldfs$`Top Schools`, caption = "Table of Total Numbers for Top Schools") %>%
+   kable_classic(full_width = TRUE, html_font = "Cambria", font_size=16) %>% save_kable(file= "Table of Total Numbers for Top Schools.html")
+
+kbl(toldfs$`Elite Schools`, caption = "Table of Total Numbers for Elite Schools") %>%
+   kable_classic(full_width = TRUE, html_font = "Cambria", font_size=16) %>% save_kable(file= "Table of Total Numbers for Elite Schools.html")
+
+kbl(toldfs$`Selective Schools`, caption = "Table of Total Numbers for Selective Schools") %>%
+   kable_classic(full_width = TRUE, html_font = "Cambria", font_size=16) %>% save_kable(file= "Table of Total Numbers for Selective Schools.html")
+
+kbl(toldfs$`Normal Schools`, caption = "Table of Total Numbers for Normal Schools") %>%
+   kable_classic(full_width = TRUE, html_font = "Cambria", font_size=16)%>% save_kable(file= "Table of Total Numbers for Normal Schools.html")
+
+```
+
+```{r}
+#promotion
+timedfs<- df[(names(df) %in%c("Time.AP", "Project.AP", "Textbook.AP", "Books.AP","Papers.AP","Awards.AP", "Time.FP","Textbooks.FP", "Books.FP", "Papers.FP", "Projects.FP", "Awards.FP","overalltrank"))]
+
+timedfs$eliteschools <- cut(timedfs$overalltrank, c(0,5,20,50,130), c("Top Schools","Elite Schools" ,"Selective Schools","Normal Schools"))
+unique(timedfs$eliteschools)
+
+ptdfs <- describeBy(timedf[1:12], group = timedfs$eliteschools, fast = TRUE, omit= TRUE)
+
+rownames(ptdfs$`Top Schools`) <-  c("Time When Promoted as AP", "# of Projects when Promoted as AP","# of Textbooks when Promoted as AP","# of Published Books when Promoted as AP", "# of  Papers when Promoted as AP", "# of Awards when Promoted as AP","Time when Promoted as FP","# of Textbooks when Promoted as FP","# of Books when Promoted as FP","# of Papers when Promoted as FP","# of Projects when Promoted as FP", "# of Awards when Promoted as FP")
+
+rownames(ptdfs$`Elite Schools`) <-  c("Time When Promoted as AP", "# of Projects when Promoted as AP","# of Textbooks when Promoted as AP","# of Published Books when Promoted as AP", "# of  Papers when Promoted as AP", "# of Awards when Promoted as AP","Time when Promoted as FP","# of Textbooks when Promoted as FP","# of Books when Promoted as FP","# of Papers when Promoted as FP","# of Projects when Promoted as FP", "# of Awards when Promoted as FP")
+
+
+rownames(ptdfs$`Selective Schools`) <-  c("Time When Promoted as AP", "# of Projects when Promoted as AP","# of Textbooks when Promoted as AP","# of Published Books when Promoted as AP", "# of  Papers when Promoted as AP", "# of Awards when Promoted as AP","Time when Promoted as FP","# of Textbooks when Promoted as FP","# of Books when Promoted as FP","# of Papers when Promoted as FP","# of Projects when Promoted as FP", "# of Awards when Promoted as FP")
+
+rownames(ptdfs$`Normal Schools`) <-  c("Time When Promoted as AP", "# of Projects when Promoted as AP","# of Textbooks when Promoted as AP","# of Published Books when Promoted as AP", "# of  Papers when Promoted as AP", "# of Awards when Promoted as AP","Time when Promoted as FP","# of Textbooks when Promoted as FP","# of Books when Promoted as FP","# of Papers when Promoted as FP","# of Projects when Promoted as FP", "# of Awards when Promoted as FP")
+
+kable(ptdfs$`Top Schools`, caption = "Table of Promotion, Top Schools") %>% kable_styling(latex_options = c("hold_position")) %>% kable_classic(full_width = TRUE, html_font = "Cambria", font_size=16) %>% save_kable(file= "Table of Promotion, Top Schools.html")
+
+kbl(ptdfs$`Elite Schools`,format="html" ,caption = "Table of Promotion, Elite Schools") %>% kable_styling(latex_options = c("hold_position")) %>% kable_classic(full_width = TRUE, html_font = "Cambria", font_size=14) %>% save_kable(file= "Table of Promotion, Elite Schools.html")
+
+kable(ptdfs$`Selective Selective Schools`, caption = "Table of Promotion, Selective Schools") %>% kable_styling(latex_options = c("hold_position")) %>% kable_classic(full_width = TRUE, html_font = "Cambria", font_size=16) %>% save_kable(file= "Table of Promotion, Selective Schools.html")
+
+kable(ptdfs$`Normal Schools`, caption = "Table of Promotion, Normal Schools") %>% kable_styling(latex_options = c("hold_position")) %>% kable_classic(full_width = TRUE, html_font = "Cambria", font_size=16) %>% save_kable(file= "Table of Promotion, Normal Schools.html")
+
+```
+
+```{r}
+#Create Department Based Plots
+facgenderd <- df[,c('title.factor', 'Man',"elitedepartments", 'IntDegree', 'Partymembers', 'VisitScholar')]
+unique(facgenderd$title.factor)
+
+levels(facgenderd$title.factor)[levels(facgenderd$title.factor)=='1'] <- 'Assistant Professor'
+levels(facgenderd$title.factor)[levels(facgenderd$title.factor)=='2'] <- 'Associate Professor'
+levels(facgenderd$title.factor)[levels(facgenderd$title.factor)=='3'] <- 'Full Professor'
+
+facgenderd <- facgenderd[!is.na(df$Man),]
+
+facgenderd$Gender <- with(facgenderd, ifelse(Man == "1",  'Man','Woman'))
+facgenderd$International <- with(facgenderd, ifelse(IntDegree == "1",  'Hold International Degree','Not Hold International Degree'))
+facgenderd$Membership <- with(facgenderd, ifelse(Partymembers == "1",  'Party Member','Non Party Member'))
+facgenderd$Visiting <- with(facgenderd, ifelse(VisitScholar == "1",  'Served as Visiting Scholars','Not Served as Visiting Scholars'))
+
+FGend <- ggplot(facgenderd, aes(x = elitedepartments, fill = Gender)) + 
+  geom_bar(aes(x = title.factor), position = "fill") + ylab('Gender(%)')+
+  facet_grid(. ~ elitedepartments, switch="both") + xlab('Titles')+ theme(axis.text.x = element_text(angle = -40)) +theme(plot.title = element_text(hjust = 0.5))
+
+
+Fintd <- ggplot(facgenderd, aes(x = elitedepartments, fill = International)) + 
+  geom_bar(aes(x = title.factor), position = "fill") + ylab('International Degree(%)')+
+  facet_grid(. ~ elitedepartments, switch="both") + xlab('Titles')+ theme(axis.text.x = element_text(angle = -40)) +theme(plot.title = element_text(hjust = 0.5))
+
+
+Fpard <- ggplot(facgenderd, aes(x = elitedepartments, fill = Membership)) + 
+  geom_bar(aes(x = title.factor), position = "fill") + ylab('Party Members(%)')+
+  facet_grid(. ~ elitedepartments, switch="both") + xlab('Titles')+ theme(axis.text.x = element_text(angle = -40)) +theme(plot.title = element_text(hjust = 0.5))
+
+
+Fvisit <- ggplot(facgenderd, aes(x = elitedepartments, fill = Visiting)) + 
+  geom_bar(aes(x = title.factor), position = "fill") + ylab('Visit Scholars(%)')+
+  facet_grid(. ~ elitedepartments, switch="both") + xlab('Titles')+ theme(axis.text.x = element_text(angle = -40)) +theme(plot.title = element_text(hjust = 0.5)) 
+
+FGend
+Fintd
+Fpard
+Fvisit
+
+```
+
+
+
+```{r}
+
+#Create Schools Based Plots
+facgenders <- df[,c('title.factor', 'Man',"eliteschools", 'IntDegree', 'Partymembers', 'VisitScholar')]
+unique(facgenders$title.factor)
+
+levels(facgenders$title.factor)[levels(facgenders$title.factor)=='1'] <- 'Assistant Professor'
+levels(facgenders$title.factor)[levels(facgenders$title.factor)=='2'] <- 'Associate Professor'
+levels(facgenders$title.factor)[levels(facgenders$title.factor)=='3'] <- 'Full Professor'
+
+facgenders <- facgenders[!is.na(df$Man),]
+
+facgenders$Gender <- with(facgenders, ifelse(Man == "1",  'Man','Woman'))
+facgenders$International <- with(facgenders, ifelse(IntDegree == "1",  'Hold International Degree','Not Hold International Degree'))
+facgenders$Membership <- with(facgenders, ifelse(Partymembers == "1",  'Party Member','Non Party Member'))
+facgenders$Visiting <- with(facgenders, ifelse(VisitScholar == "1",  'Served as Visiting Scholars','Not Served as Visiting Scholars'))
+
+FGens <- ggplot(facgenders, aes(x = eliteschools, fill = Gender)) + 
+  geom_bar(aes(x = title.factor), position = "fill") + ylab('Gender(%)')+
+  facet_grid(. ~ eliteschools, switch="both") + xlab('Titles')+ theme(axis.text.x = element_text(angle = 90)) +theme(plot.title = element_text(hjust = 0.5))
+
+
+Fints <- ggplot(facgenders, aes(x = eliteschools, fill = International)) + 
+  geom_bar(aes(x = title.factor), position = "fill") + ylab('International Degree(%)')+
+  facet_grid(. ~ eliteschools, switch="both") + xlab('Titles')+ theme(axis.text.x = element_text(angle = 90)) +theme(plot.title = element_text(hjust = 0.5))
+
+
+Fpars <- ggplot(facgenders, aes(x = eliteschools, fill = Membership)) + 
+  geom_bar(aes(x = title.factor), position = "fill") + ylab('Party Members(%)')+
+  facet_grid(. ~ eliteschools, switch="both") + xlab('Titles')+ theme(axis.text.x = element_text(angle = 90)) +theme(plot.title = element_text(hjust = 0.5))
+
+
+Fvisits <- ggplot(facgenders, aes(x = eliteschools, fill = Visiting)) + 
+  geom_bar(aes(x = title.factor), position = "fill") + ylab('Visit Scholars(%)')+
+  facet_grid(. ~ eliteschools, switch="both") + xlab('Titles')+ theme(axis.text.x = element_text(angle = 90)) +theme(plot.title = element_text(hjust = 0.5))
+
+FGens
+Fints
+Fpars
+Fvisits
+
+
+```
+
+```{r}
+colnames(df)
+
+
+```
+
+
+
+
+## Regression Analysis
+
+```{r}
+#Ordinal Logit
+df$experience <- 2022 - df$`PhD.Graduation.Time`
+
+df$APnullind <- ifelse( is.na(df$experience.AP),  0,  1)
+df$FPnullind <- ifelse( is.na(df$experience.FP),  0,  1)
+
+df$AP.Post <- ifelse( is.na(df$experience.AP),  "Not Post",  "Post")
+df$FP.Post <- ifelse( is.na(df$experience.FP),  "Not Post",  "Post")
+
+df$AP.Post <- as.factor(df$AP.Post)
+df$FP.Post<- as.factor(df$FP.Post)
+
+ttdf <- df[!(names(df) %in%c("Time.AP", "Project.AP", "Textbook.AP", "Books.AP","Papers.AP","Awards.AP", "Time.FP","Textbooks.FP", "Books.FP", "Papers.FP", "Projects.FP", "Awards.FP","PhD.Graduation.Time", "foundtime", "experience.AP", "experience.FP","promote.AP","imp.experience.AP","promote.FP","imp.experience.FP"))]
+ttdf <- na.omit(ttdf)
+ttdf$title.facotr.num <- ttdf$title.factor
+
+levels(ttdf$title.factor)[levels(ttdf$title.factor)=='1'] <- 'Assistant Professor'
+levels(ttdf$title.factor)[levels(ttdf$title.factor)=='2'] <- 'Associate Professor'
+levels(ttdf$title.factor)[levels(ttdf$title.factor)=='3'] <- 'Full Professor'
+
+```
+
+```{r}
+
+mod.olog <- polr(title.factor ~ TolTextbooks + WebTolpaper + Tolbooks + Tolawards + Tolprojects + Partymembers + Man + IntDegree + visit + HonorableTitle + PhdRanking + WebHindex + Macro + PolitiE + Dev + IO + EconHis + Finance + Micro + BuEcon + Metrics + Labor + Law + Behavior + Envir + EconEnglish + departmentrank + overalltrank + otherposition.factor+experience, data = ttdf, Hess = T)
+
+summary(mod.olog)
+
+```
+
+
+
+```{r}
+# Save odds ratios, CI, stx
+bHat <- coef(mod.olog)
+ci <- exp(cbind(confint.default(mod.olog)))
+
+sdX <- c(sd(ttdf$TolTextbooks), sd(ttdf$WebTolpapers),sd(ttdf$Tolbooks),sd(ttdf$Tolawards), sd(ttdf$Tolprojects),NA,NA,NA,NA,NA,sd(ttdf$PhdRanking), sd(ttdf$WebHindex), NA, NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA, sd(ttdf$departmentrank), sd(ttdf$overalltrank),NA, sd(ttdf$experience))
+
+
+# Calculate precentage changes
+perc.bHat <- (exp(bHat) - 1) * 100
+perc.sdx <- (exp(bHat * sdX) - 1) * 100
+# Put everything together and round to 4 digits
+facOdds <- round(cbind(bHat, ci, exp(bHat), exp(bHat * sdX),
+sdX, perc.bHat, perc.sdx), digits = 3)
+colnames(facOdds) <- c("b", "LL", "UL", "e^b", "e^(b*sd)", "SD of X",
+"%", "%StdX")
+facOdds
+
+
+
+```
+
+```{r}
+
+#discrete effect
+ocMECI <- function(w, rev.dum = TRUE, digits = 3, conf.level = 0.95) {
+x <- ocME(w, rev.dum, digits)
+degf <- x$w$df.residual
+ciProb <- conf.level + (1 - conf.level)/2
+outCI <- lapply(x$out[-length(x$out)], function(y) {
+cbind(y, ' 95% LB ' = round(y[, "effect"] - qt(ciProb,
+df = degf) * y[, "error"], digits),  ' 95% UB '  = round(y[,
+"effect"] + qt(ciProb, df = degf) * y[, "error"],
+digits))
+})
+x$out[1:(length(x$out) - 1)] <- outCI
+x
+}
+mea <- ocMECI(w = mod.olog)
+mea$out
+
+
+```
+
+```{r}
+stargazer(mea$out, type = "text")
+
+
+```
+
+```{r, warning=FALSE}
+# Load necessary libraries
+library(effects)
+
+
+# Create a data frame of the data
+effect1 <- effect("WebHindex", mod.olog, typical = mean)
+effect1 <- data.frame(effect1)
+library(sjPlot)
+#explogit <- plot_model(mod.olog, type = "pred",terms="WebHindex", axis.labels = c("H-Index", "Probability of Titles"), title ="Predicted Probability of Titles based on H-Index")
+#save(explogit, file = "explogit,png")
+#load(file = "explogit.png")
+#explogit
+
+```
+
+```{r}
+ggplot(effect1, aes(WebHindex)) + 
+  geom_line(aes(y=effect1$prob.Assistant.Professor , colour="Assistant Proessor")) + 
+  geom_line(aes(y=effect1$prob.Associate.Professor, colour="Associate Professor")) + 
+  geom_line(aes(y=effect1$prob.Full.Professor, colour="Full Professor")) + 
+  scale_colour_hue(breaks=c("Assistant Proessor", "Associate Professor", "Full Professor")) + labs(title="Predicted Probabilities of H-Index", x="H-Index", y="Predicted Probability", colour="Category") 
+
+
+
+```
+
+##Find Residuals
+
+```{r}
+
+
+mod.olog.resid <- polr(title.factor ~ TolTextbooks + WebTolpaper + Tolbooks + Tolawards + Tolprojects + Partymembers+Man + IntDegree + visit + HonorableTitle + PhdRanking + WebHindex + Macro + PolitiE + Dev + IO + EconHis + Finance + Micro + BuEcon + Metrics + Labor + Law + Behavior + Envir + EconEnglish + departmentrank + overalltrank + otherposition.factor+experience, data = ttdf, Hess = T)
+
+
+ologit.predict <- predict(object = mod.olog, newdata = ttdf, type = "class")
+ologit.predict <- as.numeric(ologit.predict)
+ttdf$title.facotr.num <- as.numeric(ttdf$title.facotr.num)
+ttdf$title.predict <- ologit.predict
+
+ttdf$residuals.title <- ttdf$title.predict - ttdf$title.facotr.num
+
+ttdf$residuals.title <- as.factor(ttdf$residuals.title)
+
+```
+
+```{r}
+# Second Step Multinom
+
+ttdf$residuals.title <- relevel(ttdf$residuals.title, ref = "0")
+
+title.residual.mlog <- multinom(residuals.title ~ TolTextbooks + WebTolpaper + Tolbooks + Tolawards + Tolprojects + Partymembers+Man + IntDegree + visit + HonorableTitle + PhdRanking + WebHindex + Macro + PolitiE + Dev + IO + EconHis + Finance + Micro + BuEcon + Metrics + Labor + Law + Behavior + Envir + EconEnglish + departmentrank + overalltrank + otherposition.factor+experience, data = ttdf, Hess = T)
+
+stargazer(title.residual.mlog, type = "text")
+
+```
+
+```{r}
+## For Party
+
+s.party <- with(ttdf, data.frame(Partymembers = factor(0:1,levels = 0:1, labels = levels(ttdf$Partymembers)), TolTextbooks = mean(TolTextbooks), WebTolpaper = mean(WebTolpaper), Tolbooks = mean(WebTolpaper), Tolawards = mean(Tolawards), Tolprojects = mean(Tolprojects), Man = factor(1:1,levels = 0:1, labels = levels(ttdf$Man)), IntDegree = factor(0:0,levels = 0:1, labels = levels(ttdf$IntDegree)), visit = factor(0:0,levels = 0:1, labels = levels(ttdf$visit)), HonorableTitle = factor(0:0,levels = 0:1, labels = levels(ttdf$HonorableTitle)), PhdRanking = mean(PhdRanking), Tolbooks = mean(PhdRanking), WebHindex = mean(WebHindex), Macro = factor(1:1,levels = 0:1, labels = levels(ttdf$Macro)), PolitiE = factor(0:0,levels = 0:1, labels = levels(ttdf$PolitiE)), Dev = factor(0:0,levels = 0:1, labels = levels(ttdf$Dev)), IO = factor(0:0,levels = 0:1, labels = levels(ttdf$IO)), EconHis = factor(0:0,levels = 0:1, labels = levels(ttdf$EconHis)), Finance = factor(0:0,levels = 0:1, labels = levels(ttdf$Finance)), Micro = factor(0:0,levels = 0:1, labels = levels(ttdf$Micro)), BuEcon = factor(0:0,levels = 0:1, labels = levels(ttdf$BuEcon)), Metrics = factor(0:0,levels = 0:1, labels = levels(ttdf$Metrics)), Labor = factor(0:0,levels = 0:1, labels = levels(ttdf$Labor)), Law = factor(0:0,levels = 0:1, labels = levels(ttdf$Law)), Behavior = factor(0:0,levels = 0:1, labels = levels(ttdf$Behavior)), Envir = factor(0:0,levels = 0:1, labels = levels(ttdf$Envir)), EconEnglish = factor(0:0,levels = 0:1, labels = levels(ttdf$EconEnglish)), departmentrank = mean(departmentrank), overalltrank = mean(overalltrank), experience = mean(experience), otherposition.factor = factor(0:0,levels = 0:1, labels = levels(ttdf$otherposition.factor))))
+
+
+head(s.party)
+
+
+party.pred <- predict(title.residual.mlog, s.party, type = "probs", se.fit = T)
+
+diff.party <- party.pred[2, ] - party.pred[1, ]
+diff.party
+
+## For International Degree
+
+s.int <- with(ttdf, data.frame(Partymembers = factor(0:0,levels = 0:1, labels = levels(ttdf$Partymembers)), TolTextbooks = mean(TolTextbooks), WebTolpaper = mean(WebTolpaper), Tolbooks = mean(WebTolpaper), Tolawards = mean(Tolawards), Tolprojects = mean(Tolprojects), Man = factor(1:1,levels = 0:1, labels = levels(ttdf$Man)), IntDegree = factor(0:1,levels = 0:1, labels = levels(ttdf$IntDegree)), visit = factor(0:0,levels = 0:1, labels = levels(ttdf$visit)), HonorableTitle = factor(0:0,levels = 0:1, labels = levels(ttdf$HonorableTitle)), PhdRanking = mean(PhdRanking), Tolbooks = mean(PhdRanking), WebHindex = mean(WebHindex), Macro = factor(1:1,levels = 0:1, labels = levels(ttdf$Macro)), PolitiE = factor(0:0,levels = 0:1, labels = levels(ttdf$PolitiE)), Dev = factor(0:0,levels = 0:1, labels = levels(ttdf$Dev)), IO = factor(0:0,levels = 0:1, labels = levels(ttdf$IO)), EconHis = factor(0:0,levels = 0:1, labels = levels(ttdf$EconHis)), Finance = factor(0:0,levels = 0:1, labels = levels(ttdf$Finance)), Micro = factor(0:0,levels = 0:1, labels = levels(ttdf$Micro)), BuEcon = factor(0:0,levels = 0:1, labels = levels(ttdf$BuEcon)), Metrics = factor(0:0,levels = 0:1, labels = levels(ttdf$Metrics)), Labor = factor(0:0,levels = 0:1, labels = levels(ttdf$Labor)), Law = factor(0:0,levels = 0:1, labels = levels(ttdf$Law)), Behavior = factor(0:0,levels = 0:1, labels = levels(ttdf$Behavior)), Envir = factor(0:0,levels = 0:1, labels = levels(ttdf$Envir)), EconEnglish = factor(0:0,levels = 0:1, labels = levels(ttdf$EconEnglish)), departmentrank = mean(departmentrank), overalltrank = mean(overalltrank), experience = mean(experience), otherposition.factor = factor(0:0,levels = 0:1, labels = levels(ttdf$otherposition.factor))))
+
+
+int.pred <- predict(title.residual.mlog, s.int, type = "probs", se.fit = T)
+
+diff.int <- int.pred[2, ] - int.pred[1, ]
+diff.int
+
+
+## For Gender
+
+s.gen <- with(ttdf, data.frame(Partymembers = factor(0:0,levels = 0:1, labels = levels(ttdf$Partymembers)), TolTextbooks = mean(TolTextbooks), WebTolpaper = mean(WebTolpaper), Tolbooks = mean(WebTolpaper), Tolawards = mean(Tolawards), Tolprojects = mean(Tolprojects), Man = factor(0:1,levels = 0:1, labels = levels(ttdf$Man)), IntDegree = factor(0:0,levels = 0:1, labels = levels(ttdf$IntDegree)), visit = factor(0:0,levels = 0:1, labels = levels(ttdf$visit)), HonorableTitle = factor(0:0,levels = 0:1, labels = levels(ttdf$HonorableTitle)), PhdRanking = mean(PhdRanking), Tolbooks = mean(PhdRanking), WebHindex = mean(WebHindex), Macro = factor(0:0,levels = 0:1, labels = levels(ttdf$Macro)), PolitiE = factor(0:0,levels = 0:1, labels = levels(ttdf$PolitiE)), Dev = factor(0:0,levels = 0:1, labels = levels(ttdf$Dev)), IO = factor(0:0,levels = 0:1, labels = levels(ttdf$IO)), EconHis = factor(0:0,levels = 0:1, labels = levels(ttdf$EconHis)), Finance = factor(0:0,levels = 0:1, labels = levels(ttdf$Finance)), Micro = factor(0:0,levels = 0:1, labels = levels(ttdf$Micro)), BuEcon = factor(0:0,levels = 0:1, labels = levels(ttdf$BuEcon)), Metrics = factor(0:0,levels = 0:1, labels = levels(ttdf$Metrics)), Labor = factor(0:0,levels = 0:1, labels = levels(ttdf$Labor)), Law = factor(0:0,levels = 0:1, labels = levels(ttdf$Law)), Behavior = factor(0:0,levels = 0:1, labels = levels(ttdf$Behavior)), Envir = factor(0:0,levels = 0:1, labels = levels(ttdf$Envir)), EconEnglish = factor(0:0,levels = 0:1, labels = levels(ttdf$EconEnglish)), departmentrank = mean(departmentrank), overalltrank = mean(overalltrank), experience = mean(experience), otherposition.factor = factor(0:0,levels = 0:1, labels = levels(ttdf$otherposition.factor))))
+
+
+gen.pred <- predict(title.residual.mlog, s.gen, type = "probs", se.fit = T)
+
+diff.gen <- gen.pred[2, ] - gen.pred[1, ]
+diff.gen
+
+
+```
+
+```{r}
+rbind(diff.party, diff.int, diff.gen)
+
+
+```
+
+```{r}
+
+dataorplot <- data.frame(class = c("0", "-1", "1",
+"2", "0", "-1", "1", "2", "0", "-1", "1", "2"), mem = c(diff.party[1],
+diff.party[2], diff.party[3], diff.party[4], diff.int[1], diff.int[2],
+diff.int[3], diff.int[4], diff.gen[1], diff.gen[2],
+diff.gen[3], diff.gen[4]), cat = c(rep("Partymember", 4), rep("Int Degree", 4),rep("Man or Not", 4)))
+
+
+# Plot
+plot <- ggplot(dataorplot, aes(y = cat, x = mem, xmin = -0.005,
+xmax = 0.0075, col = class)) + geom_point() + geom_text(aes(label = class),
+hjust = 0.5, vjust = -1) + labs(x = "Marginal Effect on Outcome Probability") +
+facet_grid(cat ~ .) + scale_x_continuous()
+
+plot + theme(axis.text.y = element_blank(), axis.title.y = element_blank(),
+axis.ticks.y = element_blank(), legend.position = "none")
+
+
+```
+
+## Export Df
+
+```{r}
+write.csv(df,"df.csv", row.names = FALSE)
+write.csv(ttdf,'ttdf.csv', row.names = FALSE)
+```
+
+## Matched Ordinal Logit
+
+```{r}
+#Match the result
+
+ttdf <- na.omit(ttdf)
+
+m.out.gender <- matchit(Man  ~  TolTextbooks + WebTolpaper + Tolbooks + Tolawards + Tolprojects +  visit + HonorableTitle + PhdRanking + WebHindex + Macro + PolitiE + Dev + IO + EconHis + Finance + Micro + BuEcon + Metrics + Labor + Law + Behavior + Envir + EconEnglish + departmentrank + overalltrank + otherposition.factor + experience + Partymembers+ IntDegree, data = ttdf,  method = "subclass")
+
+
+m.out.int <- matchit(IntDegree  ~  TolTextbooks + WebTolpaper + Tolbooks + Tolawards + Tolprojects +  visit + HonorableTitle + PhdRanking + WebHindex + Macro + PolitiE + Dev + IO + EconHis + Finance + Micro + BuEcon + Metrics + Labor + Law + Behavior + Envir + EconEnglish + departmentrank + overalltrank + otherposition.factor + experience + Partymembers+ Man, data = ttdf,  method = "subclass")
+
+m.out.part <- matchit(Partymembers  ~  TolTextbooks + WebTolpaper + Tolbooks + Tolawards + Tolprojects +  visit + HonorableTitle + PhdRanking + WebHindex + Macro + PolitiE + Dev + IO + EconHis + Finance + Micro + BuEcon + Metrics + Labor + Law + Behavior + Envir + EconEnglish + departmentrank + overalltrank + otherposition.factor + experience + Man + IntDegree, data = ttdf,  method = "subclass")
+
+
+m.out.gender <- match.data(m.out.gender)
+m.out.int <- match.data(m.out.int)
+m.out.part <- match.data(m.out.part)
+
+
+
+fit.tot.gender <- polr(title.factor ~ TolTextbooks + WebTolpaper + Tolbooks + Tolawards + Tolprojects + Partymembers + Man + IntDegree + visit + HonorableTitle + PhdRanking + WebHindex + Macro + PolitiE + Dev + IO + EconHis + Finance + Micro + BuEcon + Metrics + Labor + Law + Behavior + Envir + EconEnglish + departmentrank + overalltrank + otherposition.factor+experience, data = m.out.gender, Hess = T)
+
+no.othercontrol <- polr(title.factor ~ Man+experience, data = m.out.gender, Hess = T)
+
+
+fit.tot.int <- polr(title.factor ~ TolTextbooks + WebTolpaper + Tolbooks + Tolawards + Tolprojects + Partymembers + Man + IntDegree + visit + HonorableTitle + PhdRanking + WebHindex + Macro + PolitiE + Dev + IO + EconHis + Finance + Micro + BuEcon + Metrics + Labor + Law + Behavior + Envir + EconEnglish + departmentrank + overalltrank + otherposition.factor+experience, data = m.out.int, Hess = T)
+
+fit.tot.part <- polr(title.factor ~ TolTextbooks + WebTolpaper + Tolbooks + Tolawards + Tolprojects + Partymembers + Man + IntDegree + visit + HonorableTitle + PhdRanking + WebHindex + Macro + PolitiE + Dev + IO + EconHis + Finance + Micro + BuEcon + Metrics + Labor + Law + Behavior + Envir + EconEnglish + departmentrank + overalltrank + otherposition.factor+experience, data = m.out.part, Hess = T)
+
+
+comp.gender <- comparisons(fit.tot.gender,
+                     variables = "Man",
+                     vcov = "HC3",
+                     newdata = subset(m.out.gender, Man == 1))
+summary(no.othercontrol)
+summary(fit.tot.gender)
+summary(fit.tot.int)
+summary(fit.tot.part)
+
+```
+
+
+
+
+```{r}
+
+s.m.party <- summary(m.party)
+s.m.new <- summary(m.new)
+
+
+stargazer(s.m.party, s.m.new)
+```
+
+```{r}
+
+stargazer((no.othercontrol), type = "text")
+
+stargazer(fit.tot.full, fit.tot.no, 
+          title = "Regression Model Comparison", 
+          align = TRUE, 
+          column.labels = c("Model 1", "Model 2"), 
+          dep.var.labels.include = FALSE, type = "text")
+
+
+```
+
+
+
+
+## Those who identified vs Those who Do not
+
+```{r}
+# Plot the Graph. Identified Experience vs Non-Identified Experience
+
+dfI <- df
+ttdf$APnullind<-as.factor(ttdf$APnullind)
+ttdf$FPnullind <- as.factor(ttdf$FPnullind)
+```
+
+```{r}
+# Balance
+
+
+
+# ttdf.id.ap <- ttdf 
+# ttdf.id.ap$APnullind <- as.logical(as.integer(levels(ttdf.id.ap$APnullind)[ttdf.id.ap$APnullind]))
+# 
+# m.out3.APnullind.ap <- matchit(AP.Post ~  TolTextbooks + WebTolpaper + Tolbooks + Tolawards + Tolprojects + Partymembers + IntDegree + visit + HonorableTitle + PhdRanking + WebHindex + Macro + PolitiE + Dev + IO + EconHis + Finance + Micro + BuEcon + Metrics + Labor + Law + Behavior + Envir + EconEnglish + departmentrank + overalltrank + otherposition.factor+experience + Man, data = ttdf.id.ap, method = "nearest", distance = "glm", link = "probit")
+# 
+# summary(m.out3.APnullind.ap)
+# 
+# textbooks.plot<-bal.plot(m.out3.APnullind.ap, var.name = "TolTextbooks",  type = "ecdf", facet.formula = NULL, which = "both") + ggtitle("Distributional Balance of Total Number of Textbooks")+ guides(fill=guide_legend(title="Post Work Experience or Not"))
+# textbooks.plot
+# 
+# papers.plot<-bal.plot(m.out3.APnullind.ap, var.name = "WebTolpaper",  type = "ecdf", facet.formula = NULL, which = "both") + ggtitle("Distributional Balance of Total Number of Papers")  + guides(fill=guide_legend(title="Post Work Experience or Not"))
+# papers.plot
+# 
+# IntDegree.plot<-bal.plot(m.out3.APnullind.ap, var.name = "IntDegree",  type = "ecdf", facet.formula = NULL, which = "both") + ggtitle("Distributional Balance of International Degree")+ guides(fill=guide_legend(title="Post Work Experience or Not")) + xlab("International Degree")
+# IntDegree.plot
+# 
+# 
+# party.plot<-bal.plot(m.out3.APnullind.ap, var.name = "Partymembers",  type = "ecdf", facet.formula = NULL, which = "both") + ggtitle("Distributional Balance of Party Members")+ guides(fill=guide_legend(title="Post Work Experience or Not")) + xlab("Party Members")
+# party.plot
+# 
+# gender.plot<-bal.plot(m.out3.APnullind.ap, var.name = "Man",  type = "ecdf", facet.formula = NULL, which = "both") + ggtitle("Distributional Balance of Gender")+ guides(fill=guide_legend(title="Post Work Experience or Not")) + xlab("Being a Man or Not")
+# gender.plot
+# 
+# rank.plot<-bal.plot(m.out3.APnullind.ap, var.name = "PhdRanking",  type = "ecdf", facet.formula = NULL,which = "both") + ggtitle("Distributional Balance of Ph.D. Ranking")+ guides(fill=guide_legend(title="Post Work Experience or Not"))+ xlab("Rank of PhD Program")
+# rank.plot
+
+```
+
+```{r}
+# APoriginal  <- glm(APnullind ~  TolTextbooks + WebTolpaper + Tolbooks + Tolawards + Tolprojects + Partymembers + IntDegree + visit + HonorableTitle + PhdRanking + WebHindex+ departmentrank + overalltrank + otherposition.factor + Man, data = ttdf.id.ap, family=binomial)
+# 
+# rr.AP <- Match(Y = ttdf.id.ap$title.facotr.num, Tr = ttdf.id.ap$APnullind, X = APoriginal$fitted.values, M = 1)
+# 
+# mb  <- MatchBalance(APnullind ~  TolTextbooks + WebTolpaper + Tolbooks + Tolawards + Tolprojects + Partymembers + IntDegree + visit + HonorableTitle + PhdRanking + WebHindex+ departmentrank + overalltrank + otherposition.factor + Man, data = ttdf.id.ap,match.out= rr.AP ,nboots=500)
+
+```
+
+```{r}
+colnames(ttdf)
+str(ttdf)
+
+```
+
+## Create Comparasion Table
+
+```{r}
+# For Categorical Variables
+ttdf.ap <- subset(ttdf, ttdf$title.factor == "Associate Professor" | ttdf$title.factor == "Full Professor")
+
+fac <- ttdf.ap %>% 
+  # group_by(FPnullind) %>% 
+  dplyr::select(APnullind, PhD, Man, IntDegree,Partymembers,VisitScholar,HonorableTitle) %>% 
+  pivot_longer(cols = c(PhD, Man, IntDegree, Partymembers,VisitScholar,HonorableTitle), names_to = "category", values_to = "my_tall") %>% 
+  # dplyr::filter(PhD == 1) %>% 
+  # count(FPnullind, PhD, sort = TRUE) %>% 
+  group_by(APnullind, category, my_tall) %>% 
+  # dplyr::count(APnullind, PhD) %>% 
+  dplyr::summarise(percentage_raw = n()) %>% # , .groups = "drop") %>% 
+  ungroup() %>% 
+  group_by(APnullind, category) %>% 
+  mutate(percentage = percentage_raw/sum(percentage_raw) * 100)
+fac
+
+fac.table <-fac %>% 
+   filter(my_tall == 1) %>%
+  dplyr::select(-c(my_tall, percentage_raw)) %>% 
+  pivot_wider(names_from = APnullind, values_from = percentage) %>% 
+  unnest() %>% 
+  dplyr::rename("FPnullid_0" = `0`, "FPnullid_1" = `1`)
+
+
+
+```
+
+```{r}
+
+fac.table <- as.data.frame(fac.table)
+colnames(fac.table) <- c('Names', 'Not Post(%)', 'Post (%)')
+fac.name <- c('Honorable Title', 'International Degree', 'Man', 'Party Members', 'Hold a Ph.D. Degree', 'Visiting Scholar')
+fac.table$Names <- fac.name
+fac.table %>% gt() %>% tab_header(title = 'Covariates Comparasion for Early Stage Promotion', subtitle = 'Part I. - Factor Variables')
+```
+
+```{r}
+cont <- ttdf.ap %>% 
+  dplyr::select(APnullind, WebTolpapers,Tolbooks, TolTextbooks, Tolawards, Tolprojects, PhdRanking, WebHindex, departmentrank, overalltrank, 
+                experience) %>% 
+  pivot_longer(-APnullind, names_to = "category") %>% 
+  group_by(APnullind, category) %>% 
+  dplyr::summarise(mean(value)) 
+
+
+cont
+
+
+cont.table <-cont %>% 
+  pivot_wider(names_from = APnullind, values_from = `mean(value)`) %>% 
+  unnest() %>% 
+  dplyr::rename("FPnullid_0" = `0`, "FPnullid_1" = `1`)
+
+cont.table
+
+
+```
+
+```{r}
+cont.table <- as.data.frame(cont.table)
+colnames(cont.table) <- c('Names', 'Not Post', 'Post')
+cont.name <- c('Rank of Working Departments', 'Work Experience', 'Overall Rank of Working Schools', 'Rank of Ph.D. Schools', 'Total Number of Awards', 'Total Number of Books Published', 'Total Number of Projects Undertaken', 'Total Number of Textbooks', 'H-index','Total Number of Published Papers')
+cont.table$Names <- cont.name
+cont.table %>% gt() %>% tab_header(title = 'Covariates Comparasion for Early Career Promotion', subtitle = 'Part II. - Continuous Variables')
+
+```
+
+```{r}
+# For Categorical Variables
+ttdf.fp <- subset(ttdf, ttdf$title.factor == "Full Professor")
+
+fac.fp <- ttdf.fp %>% 
+  # group_by(FPnullind) %>% 
+  dplyr::select(FPnullind, PhD, Man, IntDegree,Partymembers,VisitScholar,HonorableTitle) %>% 
+  pivot_longer(cols = c(PhD, Man, IntDegree, Partymembers,VisitScholar,HonorableTitle), names_to = "category", values_to = "my_tall") %>% 
+  # dplyr::filter(PhD == 1) %>% 
+  # count(FPnullind, PhD, sort = TRUE) %>% 
+  group_by(FPnullind, category, my_tall) %>% 
+  # dplyr::count(APnullind, PhD) %>% 
+  dplyr::summarise(percentage_raw = n()) %>% # , .groups = "drop") %>% 
+  ungroup() %>% 
+  group_by(FPnullind, category) %>% 
+  mutate(percentage = percentage_raw/sum(percentage_raw) * 100)
+
+fac.table.fp <-fac.fp %>% 
+   filter(my_tall == 1) %>%
+  dplyr::select(-c(my_tall, percentage_raw)) %>% 
+  pivot_wider(names_from = FPnullind, values_from = percentage) %>% 
+  unnest() %>% 
+  dplyr::rename("FPnullid_0" = `0`, "FPnullid_1" = `1`)
+
+
+```
+
+```{r}
+fac.table.fp <- as.data.frame(fac.table.fp)
+colnames(fac.table.fp) <- c('Names', 'Not Post(%)', 'Post (%)')
+fac.name.fp <- c('Honorable Title', 'International Degree', 'Man', 'Party Members', 'Hold a Ph.D. Degree', 'Visiting Scholar')
+fac.table.fp$Names <- fac.name.fp
+fac.table.fp %>% gt() %>% tab_header(title = 'Covariates Comparasion for Late Stage Promotion', subtitle = 'Part I. - Factor Variables') %>% as_raw_html()
+
+```
+
+```{r}
+cont.fp <- ttdf.fp %>% 
+  dplyr::select(FPnullind, WebTolpapers,Tolbooks, TolTextbooks, Tolawards, Tolprojects, PhdRanking, WebHindex, departmentrank, overalltrank, 
+                experience) %>% 
+  pivot_longer(-FPnullind, names_to = "category") %>% 
+  group_by(FPnullind, category) %>% 
+  dplyr::summarise(mean(value)) 
+
+
+cont.fp
+
+
+cont.table.fp <-cont.fp %>% 
+  pivot_wider(names_from = FPnullind, values_from = `mean(value)`) %>% 
+  unnest() %>% 
+  dplyr::rename("FPnullid_0" = `0`, "FPnullid_1" = `1`)
+
+cont.table.fp
+
+
+```
+
+```{r}
+cont.table.fp <- as.data.frame(cont.table.fp)
+colnames(cont.table.fp) <- c('Names', 'Not Post', 'Post')
+cont.name <- c('Rank of Working Departments', 'Work Experience', 'Overall Rank of Working Schools', 'Rank of Ph.D. Schools', 'Total Number of Awards', 'Total Number of Books Published', 'Total Number of Projects Undertaken', 'Total Number of Textbooks', 'H-index','Total Number of Published Papers')
+cont.table.fp$Names <- cont.name
+cont.table.fp %>% gt() %>% tab_header(title = 'Covariates Comparasion for Late Career Scholars', subtitle = 'Part II. - Continuous Variables') %>% as_raw_html()
+
+```
+
+## Variables Selection
+
+```{r}
+ttdf_clean <- ttdf %>%dplyr::select(Man, HonorableTitle, IntDegree, Partymembers, PhD, VisitScholar, departmentrank, experience, overalltrank, PhdRanking, Tolawards, Tolbooks, Tolprojects,
+                TolTextbooks, WebHindex, WebTolpapers)
+  
+ttdf_clean <- na.omit(ttdf_clean)
+ttdf_clean$Man <- as.factor(ttdf_clean$Man)
+ttdf_clean$PhD <- as.factor(ttdf_clean$PhD)
+ttdf_clean$IntDegree <- as.factor(ttdf_clean$IntDegree)
+ttdf_clean$Partymembers <- as.factor(ttdf_clean$Partymembers)
+ttdf_clean$VisitScholar <- as.factor(ttdf_clean$VisitScholar)
+ttdf_clean$HonorableTitle <- as.factor(ttdf_clean$HonorableTitle)
+
+
+# Calculate percentages for indicator variables
+ind.df <- ttdf_clean %>%
+  dplyr::select(Man, HonorableTitle, IntDegree, Partymembers, PhD, VisitScholar) %>%
+  pivot_longer(cols = c(HonorableTitle, IntDegree, Partymembers, PhD, VisitScholar), names_to = "category", values_to = "value") %>%
+  group_by(Man, category, value) %>%
+  dplyr::summarize(percentage_raw = n()) %>%
+  ungroup() %>%
+  group_by(Man, category) %>%
+  mutate(percentage = percentage_raw / sum(percentage_raw) * 100)
+
+# Filter rows where value == 1
+ind.df <- ind.df %>%
+  filter(value == 1) %>%
+  dplyr::select(-c(value, percentage_raw))
+
+# Pivot data to wide format
+ind.table <- ind.df %>%
+  pivot_wider(names_from = Man, values_from = percentage) %>%
+  unnest() %>%
+  dplyr::rename("Woman" = `0`, "Man" = `1`)
+
+# Calculate means for continuous variables
+cont.df <- ttdf_clean %>%
+  dplyr::select(Man, departmentrank, experience, overalltrank, PhdRanking, Tolawards, Tolbooks, Tolprojects,
+                TolTextbooks, WebHindex, WebTolpapers) %>%
+  pivot_longer(-Man, names_to = "category") %>%
+  group_by(Man, category) %>%
+  dplyr::summarize(mean(value))
+
+# Pivot data to wide format
+cont.table <- cont.df %>%
+  pivot_wider(names_from = Man, values_from = `mean(value)`) %>%
+  unnest() %>%
+  dplyr::rename("Woman" = `0`, "Man" = `1`)
+
+# Combine results
+result <- bind_rows(ind.table, cont.table)
+result <- as.data.frame(result)
+
+# Set row names to better names
+result$category <- c('Honorable Title (%)', 'International Degree (%)', 'Party Members (%)', 'Hold a Ph.D. Degree (%)', 'Visiting Scholar (%)', 'Rank of Working Departments', 'Work Experience', 'Overall Rank of Working Schools', 'Rank of Ph.D. Schools', 'Total Number of Awards', 'Total Number of Books Published', 'Total Number of Projects Undertaken', 'Total Number of Textbooks', 'H-index', 'Total Number of Published Papers')
+
+colnames(result)[1] ="Variables"
+result.gender <- result
+result.gender%>% gt() %>% tab_header(title = 'Covariates Comparasion based on Gender') %>% as_raw_html()
+
+```
+
+
+```{r}
+
+# Calculate percentages for indicator variables
+ind.df <- ttdf_clean %>%
+  dplyr::select(IntDegree, Man, HonorableTitle, Partymembers, PhD, VisitScholar) %>%
+  pivot_longer(cols = c(Man, HonorableTitle, Partymembers, PhD, VisitScholar), names_to = "category", values_to = "value") %>%
+  group_by(IntDegree, category, value) %>%
+  dplyr::summarize(percentage_raw = n()) %>%
+  ungroup() %>%
+  group_by(IntDegree, category) %>%
+  mutate(percentage = percentage_raw / sum(percentage_raw) * 100)
+
+# Filter rows where value == 1
+ind.df <- ind.df %>%
+  filter(value == 1) %>%
+  dplyr::select(-c(value, percentage_raw))
+
+# Pivot data to wide format
+ind.table <- ind.df %>%
+  pivot_wider(names_from = IntDegree, values_from = percentage) %>%
+  unnest() %>%
+  dplyr::rename("Without International Degree" = `0`, "With International Degree" = `1`)
+
+# Calculate means for continuous variables
+cont.df <- ttdf_clean %>%
+  dplyr::select(IntDegree, departmentrank, experience, overalltrank, PhdRanking, Tolawards, Tolbooks, Tolprojects,
+                TolTextbooks, WebHindex, WebTolpapers) %>%
+  pivot_longer(-IntDegree, names_to = "category") %>%
+  group_by(IntDegree, category) %>%
+  dplyr::summarize(mean(value))
+
+# Pivot data to wide format
+cont.table <- cont.df %>%
+  pivot_wider(names_from = IntDegree, values_from = `mean(value)`) %>%
+  unnest() %>%
+  dplyr::rename("Without International Degree" = `0`, "With International Degree" = `1`)
+
+# Combine results
+result <- bind_rows(ind.table, cont.table)
+result <- as.data.frame(result)
+result$category
+
+# Set row names to better names
+result$category <- c('Honorable Title (%)', 'Man (%)' ,'Party Members (%)', 'Hold a Ph.D. Degree (%)', 'Visiting Scholar (%)', 'Rank of Working Departments', 'Work Experience', 'Overall Rank of Working Schools', 'Rank of Ph.D. Schools', 'Total Number of Awards', 'Total Number of Books Published', 'Total Number of Projects Undertaken', 'Total Number of Textbooks', 'H-index', 'Total Number of Published Papers')
+colnames(result)[1] ="Variables"
+
+result.int <- result
+result.int%>% gt() %>% tab_header(title = 'Covariates Comparasion based on International Degree') %>% as_raw_html()
+
+
+```
+
+```{r}
+
+# Calculate percentages for indicator variables
+ind.df <- ttdf_clean %>%
+  dplyr::select(Partymembers, Man, HonorableTitle, IntDegree, PhD, VisitScholar) %>%
+  pivot_longer(cols = c(Man, HonorableTitle, IntDegree, PhD, VisitScholar), names_to = "category", values_to = "value") %>%
+  group_by(Partymembers, category, value) %>%
+  dplyr::summarize(percentage_raw = n()) %>%
+  ungroup() %>%
+  group_by(Partymembers, category) %>%
+  mutate(percentage = percentage_raw / sum(percentage_raw) * 100)
+
+# Filter rows where value == 1
+ind.df <- ind.df %>%
+  filter(value == 1) %>%
+  dplyr::select(-c(value, percentage_raw))
+
+# Pivot data to wide format
+ind.table <- ind.df %>%
+  pivot_wider(names_from = Partymembers, values_from = percentage) %>%
+  unnest() %>%
+  dplyr::rename("Not a Party Member" = `0`, "Party Member" = `1`)
+
+# Calculate means for continuous variables
+cont.df <- ttdf_clean %>%
+  dplyr::select(Partymembers, departmentrank, experience, overalltrank, PhdRanking, Tolawards, Tolbooks, Tolprojects,
+                TolTextbooks, WebHindex, WebTolpapers) %>%
+  pivot_longer(-Partymembers, names_to = "category") %>%
+  group_by(Partymembers, category) %>%
+  dplyr::summarize(mean(value))
+
+# Pivot data to wide format
+cont.table <- cont.df %>%
+  pivot_wider(names_from = Partymembers, values_from = `mean(value)`) %>%
+  unnest() %>%
+  dplyr::rename("Not a Party Member" = `0`, "Party Member" = `1`)
+
+# Combine results
+result <- bind_rows(ind.table, cont.table)
+result <- as.data.frame(result)
+result$category
+
+# Set row names to better names
+result$category <- c('Honorable Title (%)', 'International Degree (%)','Man (%)' , 'Hold a Ph.D. Degree (%)', 'Visiting Scholar (%)', 'Rank of Working Departments', 'Work Experience', 'Overall Rank of Working Schools', 'Rank of Ph.D. Schools', 'Total Number of Awards', 'Total Number of Books Published', 'Total Number of Projects Undertaken', 'Total Number of Textbooks', 'H-index', 'Total Number of Published Papers')
+colnames(result)[1] ="Variables"
+
+result.part <- result
+result.part%>% gt() %>% tab_header(title = 'Covariates Comparison based on Party Membership') %>% as_raw_html()
+
+kable(result.part)
+
+```
+
+## Additional Table
+
+
+
+```{r}
+colnames(ttdf)
+
+unique(ttdf$eliteschools)
+```
+
+```{r}
+#schooltiers and rank
+
+Elite <- ttdf %>%
+  group_by(title.factor, eliteschools) %>%
+  dplyr::summarize(avg_TolTextbooks = mean(TolTextbooks),
+                   avg_WebTolpapers = mean(WebTolpapers),
+                   avg_Tolbooks = mean(Tolbooks),
+                   avg_Tolawards = mean(Tolawards),
+                   avg_Tolprojects = mean(Tolprojects),
+                   avg_PhdRanking = mean(PhdRanking),
+                   avg_WebTolpaper = mean(WebTolpaper),
+                   avg_WebHindex = mean(WebHindex),
+                   avg_departmentrank = mean(departmentrank),
+                   avg_overalltrank = mean(overalltrank),
+                   avg_experience = mean(experience), .groups = 'drop') %>%
+  mutate(eliteschools = case_when(
+    eliteschools == "Elite Schools" ~ "Elite",
+    eliteschools == "Top Schools" ~ "Top",
+    eliteschools == "Normal Schools" ~ "Normal",
+    eliteschools == "Selective Schools" ~ "Selective"
+  )) %>%
+  pivot_longer(cols = starts_with("avg_"), names_to = "Variable", values_to = "Value") %>%
+  unite("Column", title.factor, eliteschools) %>%
+  pivot_wider(names_from = Column, values_from = Value)
+
+Elite <- as.data.frame(Elite)
+Elite <- Elite[,-1]
+Elite <- round(Elite, 2)
+
+rownames(Elite) <- c("Total Number of Published Textbooks", "Total Number of Published Papers", "Total number of Published Books", "Total Number of Awards", "Total Number of Projects", "Rank of PhD Schools", "Total Number of Papers from Database", "H-Index", "Rank of Working Departments", "Rank of Working Schools", "Experience")
+
+eliteresult <- ttdf %>% 
+  # dplyr::select(title.factor, eliteschools, PhD, IntDegree, HonorableTitle, Partymembers, Man) %>% 
+  group_by(title.factor, eliteschools) %>% 
+  mutate(title.factor = paste(title.factor, eliteschools), eliteschools = case_when(
+    eliteschools == "Elite Schools" ~ "Elite",
+    eliteschools == "Top Schools" ~ "Top",
+    eliteschools == "Normal Schools" ~ "Normal",
+    eliteschools == "Selective Schools" ~ "Selective"
+  )) %>%
+  dplyr::select(title.factor, eliteschools, PhD, IntDegree, HonorableTitle, Partymembers, Man) %>%
+  ungroup() %>% 
+  pivot_longer(cols = c(PhD, IntDegree, HonorableTitle, Partymembers, Man), names_to = "category", values_to = "value") %>%
+  group_by(title.factor, eliteschools, category) %>%
+  dplyr::summarize(percentage = mean(value == 1) * 100, .groups = 'drop') %>% 
+  dplyr::select(-eliteschools) %>% 
+  # filter(eliteschools == "Normal") %>% filter(category == "Man") %>% 
+  # pivot_wider(names_from = c(title.factor, eliteschools, category), values_from = percentage)
+  # pivot_wider(names_from = title.factor, values_from = c(percentage, eliteschools, category))
+  pivot_wider(names_from = title.factor, values_from = percentage)
+
+result.percentage <- as.data.frame(eliteresult)
+rownames(result.percentage) <- c("Honorable Title(%)", "International Degree(%)", "Party Members(%)","Having Ph.D. Degree(%)", "Man(%)")
+result.percentage <- result.percentage[,-1]
+
+xtable(Elite,type = "text")
+xtable(eliteresult,type = "text")
+```
+
+
+
+
+```{r}
+#schooltiers and rank
+
+unique(ttdf$elitedepartments)
+
+d_tier <- ttdf %>%
+  group_by(title.factor, elitedepartments) %>%
+  dplyr::summarize(avg_TolTextbooks = mean(TolTextbooks),
+                   avg_WebTolpapers = mean(WebTolpapers),
+                   avg_Tolbooks = mean(Tolbooks),
+                   avg_Tolawards = mean(Tolawards),
+                   avg_Tolprojects = mean(Tolprojects),
+                   avg_PhdRanking = mean(PhdRanking),
+                   avg_WebTolpaper = mean(WebTolpaper),
+                   avg_WebHindex = mean(WebHindex),
+                   avg_departmentrank = mean(departmentrank),
+                   avg_overalltrank = mean(overalltrank),
+                   avg_experience = mean(experience), .groups = 'drop') %>%
+  mutate(elitedepartments = ifelse(elitedepartments == "Top Departments", "Top Department","Selective Department")) %>%
+  pivot_longer(cols = starts_with("avg_"), names_to = "Variable", values_to = "Value") %>%
+  unite("Column", title.factor, elitedepartments) %>%
+  pivot_wider(names_from = Column, values_from = Value)
+
+d_tier <- as.data.frame(d_tier)
+d_tier <- d_tier[,-1]
+rownames(d_tier) <- c("Total Number of Published Textbooks", "Total Number of Published Papers", "Total number of Published Books", "Total Number of Awards", "Total Number of Projects", "Rank of PhD Schools", "Total Number of Papers from Database", "H-Index", "Rank of Working Departments", "Rank of Working Schools", "Experience")
+
+xtable(d_tier,type = "text")
+
+
+d_tier_c<- ttdf %>% 
+  # dplyr::select(title.factor, eliteschools, PhD, IntDegree, HonorableTitle, Partymembers, Man) %>% 
+  group_by(title.factor, elitedepartments) %>% 
+  mutate(title.factor = paste(title.factor, elitedepartments), elitedepartments = case_when(
+    elitedepartments == "Top Departments" ~ "Top",
+    elitedepartments == "Selective Departments" ~ "Select"
+  )) %>%
+  dplyr::select(title.factor, elitedepartments, PhD, IntDegree, HonorableTitle, Partymembers, Man) %>%
+  ungroup() %>% 
+  pivot_longer(cols = c(PhD, IntDegree, HonorableTitle, Partymembers, Man), names_to = "category", values_to = "value") %>%
+  group_by(title.factor, elitedepartments, category) %>%
+  dplyr::summarize(percentage = mean(value == 1) * 100, .groups = 'drop') %>% 
+  dplyr::select(-elitedepartments) %>% 
+  # filter(eliteschools == "Normal") %>% filter(category == "Man") %>% 
+  # pivot_wider(names_from = c(title.factor, eliteschools, category), values_from = percentage)
+  # pivot_wider(names_from = title.factor, values_from = c(percentage, eliteschools, category))
+  pivot_wider(names_from = title.factor, values_from = percentage)
+
+xtable(d_tier_c,type = "text")
+
+
+```
+
+
+
+```{r}
+
+#Gender and Rank
+A <- ttdf %>%
+  group_by(title.factor, Man) %>%
+  dplyr::summarize(avg_TolTextbooks = mean(TolTextbooks),
+                   avg_WebTolpapers = mean(WebTolpapers),
+                   avg_Tolbooks = mean(Tolbooks),
+                   avg_Tolawards = mean(Tolawards),
+                   avg_Tolprojects = mean(Tolprojects),
+                   avg_PhdRanking = mean(PhdRanking),
+                   avg_WebTolpaper = mean(WebTolpaper),
+                   avg_WebHindex = mean(WebHindex),
+                   avg_departmentrank = mean(departmentrank),
+                   avg_overalltrank = mean(overalltrank),
+                   avg_experience = mean(experience), .groups = 'drop') %>%
+  mutate(Man = ifelse(Man == 1, "Male", "Female")) %>%
+  pivot_longer(cols = starts_with("avg_"), names_to = "Variable", values_to = "Value") %>%
+  unite("Column", title.factor, Man) %>%
+  pivot_wider(names_from = Column, values_from = Value)
+A <- as.data.frame(A)
+A <- A[,-1]
+rownames(A) <- c("Total Number of Published Textbooks", "Total Number of Published Papers", "Total number of Published Books", "Total Number of Awards", "Total Number of Projects", "Rank of PhD Schools", "Total Number of Papers from Database", "H-Index", "Rank of Working Departments", "Rank of Working Schools", "Experience")
+
+
+kable(A, caption = "Table of Total Numbers", type = "latex") %>%
+   kable_classic(full_width = FALSE, html_font = "Cambria", font_size=16)
+
+Gen.A <- xtable(A)
+Gen.A
+
+result <- ttdf %>%
+  group_by(Man, title.factor) %>%
+  mutate(Man = ifelse(Man == 1, "Male", "Female")) %>%
+  mutate(title.factor = paste(title.factor, Man)) %>%
+  dplyr::select(title.factor, PhD, IntDegree, HonorableTitle, Partymembers) %>%
+  pivot_longer(cols = c(PhD, IntDegree, HonorableTitle, Partymembers), names_to = "category", values_to = "value") %>%
+  group_by(title.factor, category) %>%
+  dplyr::summarize(percentage = mean(value == 1) * 100, .groups = 'drop') %>%
+  pivot_wider(names_from = title.factor, values_from = percentage)
+
+result.percentage <- as.data.frame(result)
+rownames(result.percentage) <- c("Honorable Title(%)", "International Degree(%)", "Party Members(%)","Having Ph.D. Degree(%)")
+result.percentage <- result.percentage[,-1]
+xtable(result.percentage,type = "text")
+
+```
+
+
+
+```{r}
+#Intl and Rank
+
+A <- ttdf %>%
+  group_by(title.factor, IntDegree) %>%
+  dplyr::summarize(avg_TolTextbooks = mean(TolTextbooks),
+                   avg_WebTolpapers = mean(WebTolpapers),
+                   avg_Tolbooks = mean(Tolbooks),
+                   avg_Tolawards = mean(Tolawards),
+                   avg_Tolprojects = mean(Tolprojects),
+                   avg_PhdRanking = mean(PhdRanking),
+                   avg_WebTolpaper = mean(WebTolpaper),
+                   avg_WebHindex = mean(WebHindex),
+                   avg_departmentrank = mean(departmentrank),
+                   avg_overalltrank = mean(overalltrank),
+                   avg_experience = mean(experience), .groups = 'drop') %>%
+  mutate(IntDegree = ifelse(IntDegree == 1, "International Degree", "No International Degree")) %>%
+  pivot_longer(cols = starts_with("avg_"), names_to = "Variable", values_to = "Value") %>%
+  unite("Column", title.factor, IntDegree) %>%
+  pivot_wider(names_from = Column, values_from = Value)
+A <- as.data.frame(A)
+A <- A[,-1]
+rownames(A) <- c("Total Number of Published Textbooks", "Total Number of Published Papers from Personal Websites", "Total number of Published Books", "Total Number of Awards", "Total Number of Projects", "Rank of PhD Schools", "Total Number of Papers from Database", "H-Index", "Rank of Working Departments", "Rank of Working Schools", "Experience")
+
+
+kable(A, caption = "Table of Total Numbers", type = "latex") %>%
+   kable_classic(full_width = FALSE, html_font = "Cambria", font_size=16)
+
+Gen.B <- xtable(A)
+Gen.B
+
+result <- ttdf %>%
+  group_by(IntDegree, title.factor) %>%
+  mutate(IntDegree = ifelse(IntDegree == 1, "International Degree", "No International Degree")) %>%
+  mutate(title.factor = paste(title.factor, IntDegree)) %>%
+  dplyr::select(title.factor, PhD, Man, HonorableTitle, Partymembers) %>%
+  pivot_longer(cols = c(PhD, Man, HonorableTitle, Partymembers), names_to = "category", values_to = "value") %>%
+  group_by(title.factor, category) %>%
+  dplyr::summarize(percentage = mean(value == 1) * 100, .groups = 'drop') %>%
+  pivot_wider(names_from = title.factor, values_from = percentage)
+
+result.percentage <- as.data.frame(result)
+rownames(result.percentage) <- c("Honorable Title(%)", "Man(%)", "Party Members(%)","Having Ph.D. Degree(%)")
+result.percentage <- result.percentage[,-1]
+xtable(result.percentage, type = "text")
+
+```
+
+
+```{r}
+# Party Member
+
+
+A <- ttdf %>%
+  group_by(title.factor, Partymembers) %>%
+  dplyr::summarize(
+    avg_TolTextbooks = mean(TolTextbooks),
+    avg_WebTolpapers = mean(WebTolpapers),
+    avg_Tolbooks = mean(Tolbooks),
+    avg_Tolawards = mean(Tolawards),
+    avg_Tolprojects = mean(Tolprojects),
+    avg_PhdRanking = mean(PhdRanking),
+    avg_WebTolpaper = mean(WebTolpaper),
+    avg_WebHindex = mean(WebHindex),
+    avg_departmentrank = mean(departmentrank),
+    avg_overalltrank = mean(overalltrank),
+    avg_experience = mean(experience),
+    .groups = 'drop'
+  ) %>%
+  mutate(Partymembers = ifelse(Partymembers == 1, "Party Membership", "No Party Membership")) %>%
+  pivot_longer(cols = starts_with("avg_"), names_to = "Variable", values_to = "Value") %>%
+  unite("Column", title.factor, Partymembers) %>%
+  pivot_wider(names_from = Column, values_from = Value)
+
+A <- as.data.frame(A)
+A <- A[,-1]
+rownames(A) <- c(
+  "Total Number of Published Textbooks",
+  "Total Number of Published Papers from Personal Websites",
+  "Total number of Published Books",
+  "Total Number of Awards",
+  "Total Number of Projects",
+  "Rank of PhD Schools",
+  "Total Number of Papers from Database",
+  "H-Index",
+  "Rank of Working Departments",
+  "Rank of Working Schools",
+  "Experience"
+)
+
+kable(A, caption = "Table of Total Numbers", type = "html") %>%
+   kable_classic(full_width = FALSE, html_font = "Cambria", font_size=16)
+
+Gen.B <- xtable(A)
+Gen.B
+
+result <- ttdf %>%
+  group_by(Partymembers, title.factor) %>%
+  mutate(Partymembers = ifelse(Partymembers == 1, "Party Membership", "No Party Membership")) %>%
+  mutate(title.factor = paste(title.factor, Partymembers)) %>%
+  dplyr::select(title.factor, PhD, Man, HonorableTitle, IntDegree) %>%
+  pivot_longer(cols = c(PhD, Man, HonorableTitle, IntDegree), names_to = "category", values_to = "value") %>%
+  group_by(title.factor, category) %>%
+  dplyr::summarize(percentage = mean(value == 1) * 100, .groups = 'drop') %>%
+  pivot_wider(names_from = title.factor, values_from = percentage)
+
+result.percentage <- as.data.frame(result)
+rownames(result.percentage) <- c("Honorable Title(%)", "International Degree(%)", "Man(%)","Having Ph.D. Degree(%)")
+result.percentage <- result.percentage[,-1]
+xtable(result.percentage)
+
+
+
+```
+
+
+## Impact of Speed
+
+```{r}
+
+speed_df <- ttdf
+colnames(speed_df)
+
+speed_df$pub_speed <- ttdf$WebTolpapers/ttdf$experience
+speed_df$awards_speed <- ttdf$Tolawards/ttdf$experience
+speed_df$books_speed <- ttdf$TolTextbooks/ttdf$experience
+speed_df$projects_speeds <- ttdf$Tolprojects/ttdf$experience
+
+
+
+fit.tot.speed <- polr(title.factor ~ books_speed + pub_speed +  awards_speed + projects_speeds + Partymembers + Man + IntDegree + visit + HonorableTitle + PhdRanking + WebHindex + Macro + PolitiE + Dev + IO + EconHis + Finance + Micro + BuEcon + Metrics + Labor + Law + Behavior + Envir + EconEnglish + departmentrank + overalltrank + otherposition.factor+experience, data = speed_df, Hess = T)
+
+stargazer(fit.tot.speed)
+
+
+
+```
+
+```{r}
+
+speed_tb <- speed_df %>%
+  mutate(
+    pub_speed = ifelse(pub_speed == Inf, NA, pub_speed),
+    awards_speed = ifelse(awards_speed == Inf, NA, awards_speed),
+    books_speed = ifelse(books_speed == Inf, NA, books_speed),
+    projects_speeds = ifelse(projects_speeds == Inf, NA, projects_speeds)
+  ) %>%
+  group_by(title.factor) %>%
+  dplyr::summarize(
+    avg_pub_speed = mean(pub_speed, na.rm = TRUE),
+    avg_awards_speed = mean(awards_speed, na.rm = TRUE),
+    avg_books_speed = mean(books_speed, na.rm = TRUE),
+    avg_projects_speed = mean(projects_speeds, na.rm = TRUE)
+  ) %>%
+  pivot_longer(cols = -title.factor, names_to = "Speed", values_to = "Value") %>%
+  mutate(Speed = case_when(
+    Speed == "avg_pub_speed" ~ "Average Publication Speed",
+    Speed == "avg_awards_speed" ~ "Average Awards Speed",
+    Speed == "avg_books_speed" ~ "Average Books Speed",
+    Speed == "avg_projects_speed" ~ "Average Projects Speed"
+  )) %>%
+  pivot_wider(names_from = title.factor, values_from = Value)
+
+
+xtable(speed_tb, tpye = "latex")
+
+```
+
+
+```{r}
+colnames(speed_df)
+```
+
+
+```{r}
+#Gender and Rank
+A <- speed_df %>%
+  group_by(title.factor, Man) %>%
+  dplyr::summarize(avg_TolTextbooks = mean(TolTextbooks, na.rm = TRUE),
+                   avg_WebTolpapers = mean(WebTolpapers, na.rm = TRUE),
+                   avg_Tolbooks = mean(Tolbooks, na.rm = TRUE),
+                   avg_Tolawards = mean(Tolawards, na.rm = TRUE),
+                   avg_Tolprojects = mean(Tolprojects, na.rm = TRUE),
+                   avg_PhdRanking = mean(PhdRanking, na.rm = TRUE),
+                   avg_WebTolpaper = mean(WebTolpaper, na.rm = TRUE),
+                   avg_WebHindex = mean(WebHindex, na.rm = TRUE),
+                   avg_departmentrank = mean(departmentrank, na.rm = TRUE),
+                   avg_overalltrank = mean(overalltrank, na.rm = TRUE),
+                   avg_experience = mean(experience, na.rm = TRUE),
+                   avg_pub_speed = mean(ifelse(is.finite(pub_speed), pub_speed, NA), na.rm = TRUE),
+                   avg_awards_speed = mean(ifelse(is.finite(awards_speed), awards_speed, NA), na.rm = TRUE),
+                   avg_books_speed = mean(ifelse(is.finite(books_speed), books_speed, NA), na.rm = TRUE),
+                   avg_projects_speeds = mean(ifelse(is.finite(projects_speeds), projects_speeds, NA), na.rm = TRUE),
+                   .groups = 'drop') %>%
+  mutate(Man = ifelse(Man == 1, "Male", "Female")) %>%
+  pivot_longer(cols = starts_with("avg_"), names_to = "Variable", values_to = "Value") %>%
+  unite("Column", title.factor, Man, sep = "_") %>%
+  pivot_wider(names_from = Column, values_from = Value)
+
+A <- as.data.frame(A)
+A <- A[, -1]
+rownames(A) <- c("Total Number of Published Textbooks", "Total Number of Published Papers", "Total number of Published Books", "Total Number of Awards", "Total Number of Projects", "Rank of PhD Schools", "Total Number of Papers from Database", "H-Index", "Rank of Working Departments", "Rank of Working Schools", "Experience", "Average Paper Publication Speed", "Average Awards Speed", "Average Books Speed", "Average Projects Speed")
+
+
+
+
+kable(A, caption = "Table of Total Numbers", type = "latex") %>%
+   kable_classic(full_width = FALSE, html_font = "Cambria", font_size=16)
+
+Gen.A <- xtable(A)
+Gen.A
+
+result <- ttdf %>%
+  group_by(Man, title.factor) %>%
+  mutate(Man = ifelse(Man == 1, "Male", "Female")) %>%
+  mutate(title.factor = paste(title.factor, Man)) %>%
+  dplyr::select(title.factor, PhD, IntDegree, HonorableTitle, Partymembers) %>%
+  pivot_longer(cols = c(PhD, IntDegree, HonorableTitle, Partymembers), names_to = "category", values_to = "value") %>%
+  group_by(title.factor, category) %>%
+  dplyr::summarize(percentage = mean(value == 1) * 100, .groups = 'drop') %>%
+  pivot_wider(names_from = title.factor, values_from = percentage)
+
+result.percentage <- as.data.frame(result)
+rownames(result.percentage) <- c("Honorable Title(%)", "International Degree(%)", "Party Members(%)","Having Ph.D. Degree(%)")
+result.percentage <- result.percentage[,-1]
+xtable(result.percentage,type = "text")
+
+
+
+```
+
+
+
+```{r}
+#Partymembers and Rank Speed
+A <- speed_df %>%
+  group_by(title.factor, Partymembers) %>%
+  dplyr::summarize(avg_TolTextbooks = mean(TolTextbooks, na.rm = TRUE),
+                   avg_WebTolpapers = mean(WebTolpapers, na.rm = TRUE),
+                   avg_Tolbooks = mean(Tolbooks, na.rm = TRUE),
+                   avg_Tolawards = mean(Tolawards, na.rm = TRUE),
+                   avg_Tolprojects = mean(Tolprojects, na.rm = TRUE),
+                   avg_PhdRanking = mean(PhdRanking, na.rm = TRUE),
+                   avg_WebTolpaper = mean(WebTolpaper, na.rm = TRUE),
+                   avg_WebHindex = mean(WebHindex, na.rm = TRUE),
+                   avg_departmentrank = mean(departmentrank, na.rm = TRUE),
+                   avg_overalltrank = mean(overalltrank, na.rm = TRUE),
+                   avg_experience = mean(experience, na.rm = TRUE),
+                   avg_pub_speed = mean(ifelse(is.finite(pub_speed), pub_speed, NA), na.rm = TRUE),
+                   avg_awards_speed = mean(ifelse(is.finite(awards_speed), awards_speed, NA), na.rm = TRUE),
+                   avg_books_speed = mean(ifelse(is.finite(books_speed), books_speed, NA), na.rm = TRUE),
+                   avg_projects_speeds = mean(ifelse(is.finite(projects_speeds), projects_speeds, NA), na.rm = TRUE),
+                   .groups = 'drop') %>%
+  mutate(Partymembers = ifelse(Partymembers == 1, "Party Membership", "No Party Membership")) %>%
+  pivot_longer(cols = starts_with("avg_"), names_to = "Variable", values_to = "Value") %>%
+  unite("Column", title.factor, Partymembers, sep = "_") %>%
+  pivot_wider(names_from = Column, values_from = Value)
+
+A <- as.data.frame(A)
+A <- A[, -1]
+rownames(A) <- c("Total Number of Published Textbooks", "Total Number of Published Papers", "Total number of Published Books", "Total Number of Awards", "Total Number of Projects", "Rank of PhD Schools", "Total Number of Papers from Database", "H-Index", "Rank of Working Departments", "Rank of Working Schools", "Experience", "Average Paper Publication Speed", "Average Awards Winning Speed", "Average Books Speed", "Average Projects Speed")
+
+
+
+
+kable(A, caption = "Table of Total Numbers", type = "latex") %>%
+   kable_classic(full_width = FALSE, html_font = "Cambria", font_size=16)
+
+Gen.A <- xtable(A)
+Gen.A
+
+
+```
+
+
+
+```{r}
+#IntDegree and Rank Speed
+A <- speed_df %>%
+  group_by(title.factor, IntDegree) %>%
+  dplyr::summarize(avg_TolTextbooks = mean(TolTextbooks, na.rm = TRUE),
+                   avg_WebTolpapers = mean(WebTolpapers, na.rm = TRUE),
+                   avg_Tolbooks = mean(Tolbooks, na.rm = TRUE),
+                   avg_Tolawards = mean(Tolawards, na.rm = TRUE),
+                   avg_Tolprojects = mean(Tolprojects, na.rm = TRUE),
+                   avg_PhdRanking = mean(PhdRanking, na.rm = TRUE),
+                   avg_WebTolpaper = mean(WebTolpaper, na.rm = TRUE),
+                   avg_WebHindex = mean(WebHindex, na.rm = TRUE),
+                   avg_departmentrank = mean(departmentrank, na.rm = TRUE),
+                   avg_overalltrank = mean(overalltrank, na.rm = TRUE),
+                   avg_experience = mean(experience, na.rm = TRUE),
+                   avg_pub_speed = mean(ifelse(is.finite(pub_speed), pub_speed, NA), na.rm = TRUE),
+                   avg_awards_speed = mean(ifelse(is.finite(awards_speed), awards_speed, NA), na.rm = TRUE),
+                   avg_books_speed = mean(ifelse(is.finite(books_speed), books_speed, NA), na.rm = TRUE),
+                   avg_projects_speeds = mean(ifelse(is.finite(projects_speeds), projects_speeds, NA), na.rm = TRUE),
+                   .groups = 'drop') %>%
+  mutate(IntDegree = ifelse(IntDegree == 1, "International Degree", "No International Degree")) %>%
+  pivot_longer(cols = starts_with("avg_"), names_to = "Variable", values_to = "Value") %>%
+  unite("Column", title.factor, IntDegree, sep = "_") %>%
+  pivot_wider(names_from = Column, values_from = Value)
+
+A <- as.data.frame(A)
+A <- A[, -1]
+rownames(A) <- c("Total Number of Published Textbooks", "Total Number of Published Papers", "Total number of Published Books", "Total Number of Awards", "Total Number of Projects", "Rank of PhD Schools", "Total Number of Papers from Database", "H-Index", "Rank of Working Departments", "Rank of Working Schools", "Experience", "Average Paper Publication Speed", "Average Awards Winning Speed", "Average Books Speed", "Average Projects Speed")
+
+
+
+
+kable(A, caption = "Table of Total Numbers", type = "latex") %>%
+   kable_classic(full_width = FALSE, html_font = "Cambria", font_size=16)
+
+Gen.A <- xtable(A)
+Gen.A
+
+
+```
+
+
+
+## Tier tables Plus, Regression, One Fields 
+```{r}
+
+m.out.party <- matchit(Partymembers  ~  TolTextbooks + WebTolpaper + Tolbooks + Tolawards + Tolprojects +  visit + HonorableTitle + PhdRanking + WebHindex + Macro + PolitiE + Dev + IO + EconHis + Finance + Micro + BuEcon + Metrics + Labor + Law + Behavior + Envir + EconEnglish + departmentrank + overalltrank + otherposition.factor + experience +  Man+ IntDegree, data = ttdf,  method = "subclass")
+
+
+m.out.party <- match.data(m.out.party)
+
+
+party.gender.c <- glm(Partymembers ~ TolTextbooks + WebTolpaper + Tolbooks + Tolawards + Tolprojects +  Man + IntDegree + visit + HonorableTitle + PhdRanking + WebHindex+ departmentrank + overalltrank + otherposition.factor+experience + as.factor(Field)+title.factor, data = df, family = binomial(link = "probit"))
+
+party.gender <- glm(Partymembers ~ TolTextbooks + WebTolpaper + Tolbooks + Tolawards + Tolprojects +  Man + IntDegree + visit + HonorableTitle + PhdRanking + WebHindex+ departmentrank + overalltrank + otherposition.factor+experience+title.factor, data = m.out.party, family = binomial(link = "probit"))
+
+party.gender.mc <- glm(Partymembers ~ TolTextbooks + WebTolpaper + Tolbooks + Tolawards + Tolprojects +  Man + IntDegree + visit + HonorableTitle + PhdRanking + WebHindex+ departmentrank + overalltrank + otherposition.factor+experience+title.factor+ + Macro + PolitiE + Dev + IO + EconHis + Finance + Micro + BuEcon + Metrics + Labor + Law + Behavior + Envir + EconEnglish , data = m.out.party, family = binomial(link = "probit"))
+
+party.gender.o <- glm(Partymembers ~ Man, data = df, family = binomial(link = "probit"))
+
+
+m.out.party$AssociateDummy <- ifelse(m.out.party$title.factor == "Associate Professor", 1, 0)
+# Create a dummy variable for title.factor == 2
+#m.out.party$AssociateDummy <- as.numeric(m.out.party$title.factor == 2)
+m.out.party$IntDegree1_AssociateDummy <- as.numeric(m.out.party$IntDegree) * as.numeric(m.out.party$AssociateDummy)
+
+m.out.party$Man1_AssociateDummy <- as.numeric(m.out.party$Man) * as.numeric(m.out.party$AssociateDummy)
+
+party.gender.partyinter <- glm(Partymembers ~ TolTextbooks + WebTolpaper + Tolbooks + Tolawards + Tolprojects + Man + IntDegree + visit + HonorableTitle + PhdRanking + WebHindex + departmentrank + overalltrank + otherposition.factor + experience + title.factor + Macro + PolitiE + Dev + IO + EconHis + Finance + Micro + BuEcon + Metrics + Labor + Law + Behavior + Envir + EconEnglish + Man1_AssociateDummy, data = m.out.party, family = binomial(link = "probit"))
+
+party.int.partyinter <- glm(Partymembers ~ TolTextbooks + WebTolpaper + Tolbooks + Tolawards + Tolprojects + Man + IntDegree + visit + HonorableTitle + PhdRanking + WebHindex + departmentrank + overalltrank + otherposition.factor + experience + title.factor + Macro + PolitiE + Dev + IO + EconHis + Finance + Micro + BuEcon + Metrics + Labor + Law + Behavior + Envir + EconEnglish + IntDegree1_AssociateDummy , data = m.out.party, family = binomial(link = "probit"))
+
+
+stargazer(party.gender, party.gender.c,party.gender.mc)
+
+stargazer(party.gender.partyinter,party.gender.o, party.int.partyinter)
+
+    ```
+
+
+
+```{r}
+m.out.op <- matchit(otherposition.factor  ~  TolTextbooks + WebTolpaper + Tolbooks + Tolawards + Tolprojects +  visit + HonorableTitle + PhdRanking + WebHindex + Macro + PolitiE + Dev + IO + EconHis + Finance + Micro + BuEcon + Metrics + Labor + Law + Behavior + Envir + EconEnglish + departmentrank + overalltrank + Partymembers  + experience +   Man+ IntDegree, data = ttdf,  method = "subclass")
+
+
+m.out.op <- match.data(m.out.op)
+
+
+party.op.c <- glm(otherposition.factor ~ TolTextbooks + WebTolpaper + Tolbooks + Tolawards + Tolprojects +  Man + IntDegree + visit + HonorableTitle + PhdRanking + WebHindex+ departmentrank + overalltrank + Partymembers+experience + as.factor(Field)+title.factor, data = df, family = binomial(link = "probit"))
+
+party.op <- glm(otherposition.factor ~ TolTextbooks + WebTolpaper + Tolbooks + Tolawards + Tolprojects +  Man + IntDegree + visit + HonorableTitle + PhdRanking + WebHindex+ departmentrank + overalltrank + Partymembers+experience+title.factor, data = m.out.party, family = binomial(link = "probit"))
+
+party.op.mc <- glm(otherposition.factor ~ TolTextbooks + WebTolpaper + Tolbooks + Tolawards + Tolprojects +  Man + IntDegree + visit + HonorableTitle + PhdRanking + WebHindex+ departmentrank + overalltrank + Partymembers+experience+title.factor+ + Macro + PolitiE + Dev + IO + EconHis + Finance + Micro + BuEcon + Metrics + Labor + Law + Behavior + Envir + EconEnglish , data = m.out.party, family = binomial(link = "probit"))
+
+
+stargazer(party.op, party.op.c,party.op.mc)
+
+
+```
+
+
+
+```{r}
+
+
+
+```
+
+
+
+
+
