@@ -1,2 +1,2 @@
-# Code-Source-for-Inequality-Paper
-This repository contians files for R code, pertaining my past research.
+# Code-for-Inequality-Projects
+This repository contains files for R code, pertaining to my past research.
