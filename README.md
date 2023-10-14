@@ -1,2 +1,5 @@
 # Code-for-Inequality-Projects
-This repository contains files for R code, pertaining to my past research.
+This repository houses R code files related to my previous research, specifically:
+
+"Multidimensional Inequality in Chinese Economics Academia."
+"Data Wrangling for Health Inequality Manuscripts."
